@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cardápio — Pomodori Pizzaria</title>
+<meta name="description" content="Cardápio completo da Pomodori: 64 pizzas tradicionais, novidades e pizzas doces, assadas no forno a lenha. Delivery na Mooca.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Figtree', system-ui, sans-serif; background: #0D0B08; color: #FBF8F1; -webkit-font-smoothing: antialiased; }
+  a { color: #E3B23C; text-decoration: none; }
+  a:hover { color: #FBF8F1; }
+  @media (max-width: 760px) {
+    .rgrid { grid-template-columns: 1fr !important; gap: 0 !important; }
+    .cardapio-h1 { font-size: 44px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div style="min-height:100%;">
+
+  <!-- HEADER -->
+  <header style="position:sticky;top:0;z-index:50;background:rgba(13,11,8,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(227,178,60,.22);">
+    <div style="max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <a href="index.html" style="display:flex;align-items:center;">
+        <span class="logo" data-size="7.5"></span>
+      </a>
+      <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;">
+        <a href="index.html" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">← Voltar ao site</a>
+        <a href="https://wa.me/5511955514816" target="_blank" rel="noopener" style="background:#D6291F;color:#FBF8F1;font-weight:700;font-size:14px;padding:11px 22px;border-radius:999px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir agora</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section style="max-width:1120px;margin:0 auto;padding:64px 28px 40px;text-align:center;">
+    <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#E3B23C;">Cardápio completo</span>
+    <h1 class="cardapio-h1" style="font-family:'DM Serif Display',serif;font-size:64px;line-height:1;margin:16px 0 20px;">Todos os sabores</h1>
+    <p style="font-size:19px;line-height:1.55;color:rgba(251,248,241,.72);max-width:640px;margin:0 auto;">Todas as pizzas são preparadas com molho de tomate, orégano e azeitonas, e assadas no forno a lenha. Só trabalhamos com produtos de primeira linha.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px;">
+      <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Massa: fina · média · grossa</span>
+      <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Temos calzone</span>
+      <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Delivery · Mooca</span>
+    </div>
+  </section>
+
+  <!-- TRADICIONAIS -->
+  <section style="max-width:1120px;margin:0 auto;padding:32px 28px 20px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#FBF8F1;">Pizzas tradicionais</h2>
+      <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
+      <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">01–64</span>
+    </div>
+    <div id="tradicionais" class="rgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0 48px;"></div>
+  </section>
+
+  <!-- NOVIDADES -->
+  <section style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#E3B23C;">Novidades</h2>
+      <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
+    </div>
+    <div id="novidades" class="rgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"></div>
+  </section>
+
+  <!-- DOCES -->
+  <section style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#FBF8F1;">Pizzas doces</h2>
+      <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
+    </div>
+    <div id="doces" class="rgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0 48px;"></div>
+  </section>
+
+  <!-- CTA -->
+  <section style="max-width:1120px;margin:40px auto 0;padding:0 28px 90px;">
+    <div style="background:#D6291F;border-radius:22px;padding:56px 40px;text-align:center;">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:44px;margin:0 0 12px;color:#FBF8F1;">Escolheu? É só chamar.</h2>
+      <p style="font-size:18px;color:rgba(251,248,241,.9);margin:0 0 30px;">Peça pelo WhatsApp ou pelos apps. Sai do forno e vai quentinho pra sua porta.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+        <a href="https://wa.me/5511955514816" target="_blank" rel="noopener" style="background:#0D0B08;color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir no WhatsApp</a>
+        <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no iFood</a>
+        <a href="https://www.99app.com/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no 99</a>
+        <a href="https://www.ketaa.com/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no Ketaa</a>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:rgba(251,248,241,.8);margin-top:22px;">Também no 99 e no Ketaa · (11) 95551-4816</div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:rgba(251,248,241,.4);margin:26px 0 0;">Este site apresenta o cardápio e não processa pedidos nem pagamentos.</p>
+  </section>
+
+</div>
+
+<script>
+const MENU = {
+  tradicionais: [
+    { n: "01", nome: "À Moda", ing: "Presunto, calabresa, ervilha, champignon e mussarela" },
+    { n: "02", nome: "À Moda do Pizzaiolo", ing: "Presunto, palmito, bacon e mussarela" },
+    { n: "03", nome: "Abobrinha I", ing: "Abobrinha temperada, mussarela, parmesão e bacon" },
+    { n: "04", nome: "Abobrinha II", ing: "Abobrinha temperada, mussarela de búfala, parmesão e tomate cereja" },
+    { n: "05", nome: "Aeromoça", ing: "Frango, bacon, mussarela e catupiry" },
+    { n: "06", nome: "Alho I", ing: "Parmesão e alho frito" },
+    { n: "07", nome: "Alho II", ing: "Mussarela e alho frito" },
+    { n: "08", nome: "Alho Poró", ing: "Peito de peru, palmito, alho poró e cream cheese" },
+    { n: "09", nome: "Aliche", ing: "Aliche importado e parmesão" },
+    { n: "10", nome: "Atum I", ing: "Atum sólido com mussarela" },
+    { n: "11", nome: "Atum II", ing: "Atum sólido e cebola" },
+    { n: "12", nome: "Bacon I", ing: "Mussarela e bacon em cubos" },
+    { n: "13", nome: "Bacon II", ing: "Mussarela e fatias de bacon" },
+    { n: "14", nome: "Baiana", ing: "Calabresa moída, pimenta, mussarela e cebola" },
+    { n: "15", nome: "Bauru", ing: "Presunto, tomate e mussarela" },
+    { n: "16", nome: "Berinjela", ing: "Berinjela refogada, mussarela e parmesão" },
+    { n: "17", nome: "Brócolis", ing: "Brócolis refogado, bacon e mussarela" },
+    { n: "18", nome: "Caipirão", ing: "Frango temperado, milho verde e mussarela" },
+    { n: "19", nome: "Calabresa", ing: "Linguiça calabresa com cebola" },
+    { n: "20", nome: "Calábria", ing: "Calabresa moída e catupiry" },
+    { n: "21", nome: "Carijó", ing: "Frango temperado, milho verde e catupiry" },
+    { n: "22", nome: "Catuguesa", ing: "Presunto, ovo, cebola, ervilha e catupiry" },
+    { n: "23", nome: "Catupiry", ing: "Catupiry original" },
+    { n: "24", nome: "Champignon", ing: "Champignon temperado e mussarela" },
+    { n: "25", nome: "Cinco Queijos", ing: "Catupiry, mussarela, provolone, parmesão e gorgonzola" },
+    { n: "26", nome: "Contadina", ing: "Presunto, mussarela e parmesão" },
+    { n: "27", nome: "Cremonese", ing: "Lombo canadense, cebola e catupiry" },
+    { n: "28", nome: "Da Sogra", ing: "Mussarela de búfala, tomate seco, aliche e rúcula" },
+    { n: "29", nome: "Parma I", ing: "Presunto parma espanhol, mussarela de búfala e rúcula" },
+    { n: "30", nome: "Parma II", ing: "Presunto parma espanhol, mussarela e brie" },
+    { n: "31", nome: "Do Alemão", ing: "Calabresa, cebola, tomate e mussarela" },
+    { n: "32", nome: "Dois Queijos", ing: "Mussarela e catupiry" },
+    { n: "33", nome: "Escarola I", ing: "Escarola, cebola e mussarela" },
+    { n: "34", nome: "Escarola II", ing: "Escarola, aliche ou bacon e mussarela" },
+    { n: "35", nome: "Forneiro", ing: "Catupiry, tomate, parmesão e alho poró" },
+    { n: "36", nome: "Francesa", ing: "Presunto, ovo e mussarela" },
+    { n: "37", nome: "Frango", ing: "Frango temperado e catupiry" },
+    { n: "38", nome: "Deradelli", ing: "Peito de peru e catupiry" },
+    { n: "39", nome: "Gorgonzola (Agridoce)", ing: "Gorgonzola, mussarela, mel e nozes" },
+    { n: "40", nome: "Light", ing: "Peito de peru, palmito e mussarela de búfala" },
+    { n: "41", nome: "Lombo", ing: "Lombo canadense e cebola" },
+    { n: "42", nome: "Marguerita", ing: "Mussarela, manjericão, parmesão e tomate" },
+    { n: "43", nome: "Mexicana", ing: "Atum, champignon, mussarela e bacon" },
+    { n: "44", nome: "Milho Verde", ing: "Milho verde e catupiry" },
+    { n: "45", nome: "Mussarela", ing: "Mussarela" },
+    { n: "46", nome: "Napoalho", ing: "Mussarela, parmesão, tomate e alho frito" },
+    { n: "47", nome: "Napolitana", ing: "Mussarela, tomate e parmesão" },
+    { n: "48", nome: "Palmito", ing: "Palmito, cebola e mussarela" },
+    { n: "49", nome: "Palmito com Catupiry", ing: "Palmito e catupiry" },
+    { n: "50", nome: "Pepperoni", ing: "Mussarela e pepperoni" },
+    { n: "51", nome: "Peruana", ing: "Atum, ervilha e catupiry" },
+    { n: "52", nome: "Pomodori", ing: "Presunto, bacon, champignon, palmito e catupiry" },
+    { n: "53", nome: "Portuguesa", ing: "Presunto, mussarela, ovo, cebola e ervilha" },
+    { n: "54", nome: "Quatro Queijos", ing: "Mussarela, catupiry, provolone e parmesão" },
+    { n: "55", nome: "Romana", ing: "Mussarela, aliche, tomate e parmesão" },
+    { n: "56", nome: "Rúcula", ing: "Mussarela de búfala, tomate seco e rúcula" },
+    { n: "57", nome: "Shimeji", ing: "Shimeji e cream cheese" },
+    { n: "58", nome: "Siciliana", ing: "Bacon, champignon e mussarela" },
+    { n: "59", nome: "Toscana", ing: "Calabresa moída e mussarela" },
+    { n: "60", nome: "Três Queijos", ing: "Mussarela, catupiry e parmesão" },
+    { n: "61", nome: "Tropical", ing: "Palmito, cebola, ervilha e mussarela de búfala" },
+    { n: "62", nome: "Camarão", ing: "Camarão, ervilha, ovo, cebola coberta com mussarela" },
+    { n: "63", nome: "Temaki", ing: "Atum, cream cheese, molho tarê e cebolinha" },
+    { n: "64", nome: "Carne Seca", ing: "Carne seca desfiada" }
+  ],
+  novidades: [
+    { nome: "Do Juruna", ing: "Mussarela, calabresa moída, cebola, pimenta, tomate em rodelas, parmesão e catupiry" },
+    { nome: "Do Rony", ing: "Mussarela, queijo brie, geleia de amora, nozes e raspa de limão siciliano" },
+    { nome: "Filé Mignon", ing: "Mussarela, filé mignon, brócolis, champignon e alho frito" },
+    { nome: "Brunão", ing: "Mussarela, palmito, catupiry, cebola e tomate" }
+  ],
+  doces: [
+    { n: "65", nome: "Banana", ing: "Banana, canela e leite condensado" },
+    { n: "66", nome: "Brigadeiro", ing: "Chocolate e granulado" },
+    { n: "67", nome: "Choconana", ing: "Banana e chocolate" },
+    { n: "68", nome: "Chocorango", ing: "Chocolate e morango" },
+    { n: "69", nome: "MM's", ing: "Chocolate e MM's" },
+    { n: "70", nome: "Paçoca", ing: "Chocolate e paçoca" },
+    { n: "71", nome: "Uva com Chocolate", ing: "Chocolate branco derretido com uvas em pedaços" },
+    { n: "72", nome: "Banofe", ing: "Doce de leite, banana, cream cheese e canela" },
+    { n: "73", nome: "Banana Nevada", ing: "Banana, canela, chocolate branco e coco" },
+    { n: "74", nome: "Óreo", ing: "Chocolate branco derretido, pedaços de óreo e cereja" }
+  ]
+};
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function rowLista(p, numStyle) {
+  return `<div style="display:flex;gap:14px;padding:15px 0;border-bottom:1px solid rgba(251,248,241,.1);">
+    <span style="${numStyle}">${esc(p.n)}</span>
+    <div>
+      <div style="font-weight:700;font-size:17px;color:#FBF8F1;letter-spacing:.2px;">${esc(p.nome)}</div>
+      <div style="font-size:14px;line-height:1.45;color:rgba(251,248,241,.6);margin-top:3px;">${esc(p.ing)}</div>
+    </div>
+  </div>`;
+}
+
+const numTrad = "font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:#D6291F;min-width:26px;";
+const numDoce = "font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:#1B4A3F;background:#E3B23C;border-radius:6px;padding:1px 7px;height:fit-content;";
+
+document.getElementById('tradicionais').innerHTML = MENU.tradicionais.map(p => rowLista(p, numTrad)).join('');
+document.getElementById('doces').innerHTML = MENU.doces.map(p => rowLista(p, numDoce)).join('');
+document.getElementById('novidades').innerHTML = MENU.novidades.map(p => `
+  <div style="background:rgba(227,178,60,.08);border:1px solid rgba(227,178,60,.3);border-radius:14px;padding:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
+      <div style="font-weight:800;font-size:19px;color:#E3B23C;">${esc(p.nome)}</div>
+      <span style="font-family:'Space Mono',monospace;font-size:10px;color:#0D0B08;background:#E3B23C;padding:3px 8px;border-radius:6px;font-weight:700;">NOVIDADE</span>
+    </div>
+    <div style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.72);margin-top:8px;">${esc(p.ing)}</div>
+  </div>`).join('');
+</script>
+<script src="app.js"></script>
+</body>
+</html>
