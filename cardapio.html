@@ -17,6 +17,7 @@
   @media (max-width: 760px) {
     .rgrid { grid-template-columns: 1fr !important; gap: 0 !important; }
     .cardapio-h1 { font-size: 44px !important; }
+    .cardapio-galeria { grid-template-columns: 1fr 1fr !important; }
   }
 </style>
 </head>
@@ -46,6 +47,32 @@
       <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Massa: fina · média · grossa</span>
       <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Temos calzone</span>
       <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Delivery · Mooca</span>
+    </div>
+  </section>
+
+  <!-- GALERIA -->
+  <section style="max-width:1120px;margin:0 auto;padding:20px 28px 8px;">
+    <div class="cardapio-galeria" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+      <figure style="margin:0;position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+        <img src="paracardapio1.jpg" alt="Pizza salgada da Pomodori" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.82),transparent 55%);pointer-events:none;"></div>
+        <figcaption style="position:absolute;left:12px;bottom:12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0D0B08;background:#E3B23C;padding:5px 10px;border-radius:999px;">Salgada</figcaption>
+      </figure>
+      <figure style="margin:0;position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+        <img src="paracardapio2.jpg" alt="Pizza salgada da Pomodori" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.82),transparent 55%);pointer-events:none;"></div>
+        <figcaption style="position:absolute;left:12px;bottom:12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#0D0B08;background:#E3B23C;padding:5px 10px;border-radius:999px;">Salgada</figcaption>
+      </figure>
+      <figure style="margin:0;position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+        <img src="pizzadoce.jpg" alt="Pizza doce da Pomodori" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.82),transparent 55%);pointer-events:none;"></div>
+        <figcaption style="position:absolute;left:12px;bottom:12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#FBF8F1;background:#D6291F;padding:5px 10px;border-radius:999px;">Doce</figcaption>
+      </figure>
+      <figure style="margin:0;position:relative;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+        <img src="doceuva.jpg" alt="Pizza doce de uva com chocolate da Pomodori" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.82),transparent 55%);pointer-events:none;"></div>
+        <figcaption style="position:absolute;left:12px;bottom:12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#FBF8F1;background:#D6291F;padding:5px 10px;border-radius:999px;">Doce</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -86,9 +113,9 @@
         <a href="https://wa.me/5511955514816" target="_blank" rel="noopener" style="background:#0D0B08;color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir no WhatsApp</a>
         <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no iFood</a>
         <a href="https://www.99app.com/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no 99</a>
-        <a href="https://www.ketaa.com/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no Ketaa</a>
+        <a href="https://www.keeta.com/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no Keeta</a>
       </div>
-      <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:rgba(251,248,241,.8);margin-top:22px;">Também no 99 e no Ketaa · (11) 95551-4816</div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:rgba(251,248,241,.8);margin-top:22px;">Também no 99 e no Keeta · (11) 95551-4816</div>
     </div>
     <p style="text-align:center;font-size:13px;color:rgba(251,248,241,.4);margin:26px 0 0;">Este site apresenta o cardápio e não processa pedidos nem pagamentos.</p>
   </section>

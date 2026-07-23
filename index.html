@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pomodori Pizzaria — Forno a lenha na Mooca desde 1987</title>
-<meta name="description" content="Pizzaria delivery na Mooca desde 1987. Massa de fermentação natural, assada no forno a lenha e entregue ainda quente. Peça pelo WhatsApp, iFood, 99 ou Ketaa.">
+<meta name="description" content="Pizzaria delivery na Mooca desde 1987. Massa de fermentação natural, assada no forno a lenha e entregue ainda quente. Peça pelo WhatsApp, iFood, 99 ou Keeta.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -26,6 +26,20 @@
     .hero-h1 { font-size: 38px !important; }
     h2 { font-size: 34px !important; }
   }
+  /* efeito de zoom no hover das fotos (hero e história) */
+  .zoom-photo img { transition: transform .7s ease, filter .5s ease; }
+  .zoom-photo:hover img { transform: scale(1.06); filter: saturate(1.25) contrast(1.1) brightness(1.05); }
+  @media (prefers-reduced-motion: reduce) {
+    .zoom-photo:hover img { transform: none; }
+  }
+
+  @media (max-width: 640px) {
+    /* header no celular: logo centralizada em cima; links + botão juntos e centralizados embaixo */
+    .hdr-inner { justify-content: center !important; }
+    .hdr-logo { flex-basis: 100% !important; justify-content: center !important; margin-right: 0 !important; }
+    .hdr-links { justify-content: center !important; }
+    .hdr-cta-wrap { justify-content: center !important; }
+  }
 </style>
 </head>
 <body>
@@ -34,16 +48,18 @@
 
   <!-- HEADER -->
   <header style="position:sticky;top:0;z-index:50;background:rgba(13,11,8,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(227,178,60,.22);">
-    <div style="max-width:1200px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
-      <a href="#topo" style="display:flex;align-items:center;">
+    <div class="hdr-inner" style="max-width:1200px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:20px 28px;flex-wrap:wrap;">
+      <a class="hdr-logo" href="#topo" style="display:flex;align-items:center;margin-right:auto;">
         <span class="logo" data-size="7.5"></span>
       </a>
-      <nav style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+      <nav class="hdr-links" style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
         <a href="#sobre" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">Sobre</a>
         <a href="#entrega" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">Entrega</a>
         <a href="#contato" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">Contato</a>
-        <a href="cardapio.html" style="background:#E3B23C;color:#0D0B08;font-weight:800;font-size:15px;padding:12px 26px;border-radius:999px;" style-hover="background:#FBF8F1;">Cardápio</a>
       </nav>
+      <div class="hdr-cta-wrap" style="display:flex;">
+        <a href="cardapio.html" style="background:#E3B23C;color:#0D0B08;font-weight:800;font-size:15px;padding:12px 26px;border-radius:999px;" style-hover="background:#FBF8F1;">Cardápio</a>
+      </div>
     </div>
   </header>
 
@@ -58,21 +74,44 @@
         </div>
         <h1 class="hero-h1" style="font-family:'DM Serif Display',serif;font-size:72px;line-height:1.02;margin:0 0 22px;letter-spacing:-.5px;">Forno a lenha.<br><span style="color:#E3B23C;font-style:italic;">Na sua porta</span> em minutos.</h1>
         <p style="font-size:20px;line-height:1.55;color:rgba(251,248,241,.8);max-width:520px;margin:0 0 34px;">Pizzaria delivery na Mooca desde 1987. Massa de fermentação natural, assada na brasa e entregue ainda quente.</p>
-        <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px;">
-          <a href="https://wa.me/5511955514816" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:#D6291F;color:#FBF8F1;font-weight:800;font-size:18px;padding:18px 32px;border-radius:14px;box-shadow:0 10px 30px rgba(214,41,31,.35);" style-hover="background:#E3B23C;color:#0D0B08;">Pedir no WhatsApp</a>
-          <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:transparent;color:#FBF8F1;font-weight:800;font-size:18px;padding:18px 32px;border-radius:14px;border:2px solid rgba(251,248,241,.35);" style-hover="border-color:#E3B23C;color:#E3B23C;">Pedir no iFood</a>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px;">
+          <a href="https://wa.me/5511955514816" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:11px;background:#D6291F;color:#FBF8F1;font-weight:800;font-size:18px;padding:18px 32px;border-radius:14px;box-shadow:0 10px 30px rgba(214,41,31,.35);" style-hover="background:#E3B23C;color:#0D0B08;">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.06c-.24.68-1.4 1.3-1.94 1.38-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.43.75-2.13 1.02-2.42.27-.29.58-.36.77-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2.01.89 2.16.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.38-.42.51-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.61-.07.17-.19.7-.82.89-1.1.19-.28.38-.23.64-.14.26.09 1.69.8 1.98.94.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
+            Pedir no WhatsApp
+          </a>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
-          <a href="https://www.99app.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:15px;padding:13px 24px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">Pedir no 99</a>
-          <a href="https://www.ketaa.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:15px;padding:13px 24px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">Pedir no Ketaa</a>
+          <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:16px;padding:13px 22px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="6" fill="#EA1D2C"/><text x="11" y="15.3" font-family="Figtree,Arial,sans-serif" font-size="11" font-weight="800" fill="#fff" text-anchor="middle">iF</text></svg>
+            Pedir no iFood
+          </a>
+          <a href="https://www.99app.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:16px;padding:13px 22px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="6" fill="#FFC800"/><text x="11" y="15.3" font-family="Figtree,Arial,sans-serif" font-size="11" font-weight="800" fill="#111" text-anchor="middle">99</text></svg>
+            Pedir no 99
+          </a>
+          <a href="https://www.keeta.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:16px;padding:13px 22px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="6" fill="#22C6A0"/><text x="11" y="15.3" font-family="Figtree,Arial,sans-serif" font-size="12" font-weight="800" fill="#fff" text-anchor="middle">K</text></svg>
+            Pedir no Keeta
+          </a>
         </div>
         <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
           <span style="display:inline-flex;align-items:center;gap:9px;font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;background:rgba(214,41,31,.14);border:1px solid rgba(214,41,31,.35);padding:9px 15px;border-radius:999px;">≈ 40 min · quente na porta</span>
         </div>
       </div>
-      <div>
-        <div style="aspect-ratio:3/4;border-radius:999px 999px 20px 20px;overflow:hidden;border:1px solid rgba(227,178,60,.3);background:repeating-linear-gradient(45deg,#1a1712,#1a1712 13px,#15120e 13px,#15120e 26px);display:flex;align-items:flex-end;justify-content:center;padding:26px;box-shadow:0 30px 60px rgba(0,0,0,.5);">
-          <span style="font-family:'Space Mono',monospace;font-size:12px;color:rgba(227,178,60,.75);text-align:center;line-height:1.6;letter-spacing:1px;">[ FOTO REAL ]<br>pizza saindo do<br>forno a lenha, brasa acesa</span>
+      <div class="hero-photo-wrap" style="position:relative;">
+        <div class="zoom-photo" style="position:relative;z-index:1;aspect-ratio:3/4;border-radius:999px 999px 20px 20px;overflow:hidden;border:1px solid rgba(227,178,60,.35);box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 6px rgba(214,41,31,.06);">
+          <img src="pizza-forno.jpg" alt="Pizza artesanal saindo do forno a lenha da Pomodori" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
+          <!-- brilho de brasa no topo -->
+          <div style="position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,rgba(227,178,60,.28),transparent 55%);mix-blend-mode:screen;pointer-events:none;"></div>
+          <!-- gradiente escuro embaixo + vinheta -->
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.96) 0%,rgba(13,11,8,.72) 30%,rgba(13,11,8,.28) 52%,transparent 72%),radial-gradient(100% 100% at 50% 40%,transparent 48%,rgba(13,11,8,.62) 100%);pointer-events:none;"></div>
+          <!-- selo flutuante -->
+          <div style="position:absolute;left:22px;bottom:22px;right:22px;display:flex;flex-direction:column;gap:8px;">
+            <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#0D0B08;background:#E3B23C;padding:7px 13px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.35);">
+              <span style="width:6px;height:6px;border-radius:50%;background:#D6291F;"></span>Direto do forno
+            </span>
+            <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#FBF8F1;text-shadow:0 2px 12px rgba(0,0,0,.7);line-height:1.15;">Assada na brasa,<br>servida quentinha.</span>
+          </div>
         </div>
       </div>
     </div>
@@ -171,8 +210,19 @@
   <section id="sobre" style="max-width:1200px;margin:0 auto;padding:96px 28px;">
     <div class="rgrid" style="display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center;">
       <div>
-        <div style="aspect-ratio:4/5;border-radius:20px 20px 999px 999px;overflow:hidden;border:1px solid rgba(13,11,8,.12);background:repeating-linear-gradient(45deg,#efe8d8,#efe8d8 13px,#e7dece 13px,#e7dece 26px);display:flex;align-items:flex-start;justify-content:center;padding:26px;">
-          <span style="font-family:'Space Mono',monospace;font-size:12px;color:#8a7f6a;text-align:center;line-height:1.6;letter-spacing:1px;">[ FOTO REAL ]<br>o forno a lenha,<br>o pizzaiolo, a Mooca</span>
+        <div class="zoom-photo" style="position:relative;aspect-ratio:4/5;border-radius:20px 20px 999px 999px;overflow:hidden;border:1px solid rgba(227,178,60,.35);box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 6px rgba(214,41,31,.06);">
+          <img src="lojaporfora.jpg" alt="Fachada da Pomodori Pizzaria na Mooca" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
+          <!-- brilho de brasa no topo -->
+          <div style="position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,rgba(227,178,60,.28),transparent 55%);mix-blend-mode:screen;pointer-events:none;"></div>
+          <!-- gradiente escuro embaixo + vinheta -->
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.96) 0%,rgba(13,11,8,.72) 30%,rgba(13,11,8,.28) 52%,transparent 72%),radial-gradient(100% 100% at 50% 40%,transparent 48%,rgba(13,11,8,.62) 100%);pointer-events:none;"></div>
+          <!-- selo flutuante -->
+          <div style="position:absolute;left:22px;bottom:48px;right:22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;">
+            <span style="display:inline-flex;align-items:center;gap:8px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#0D0B08;background:#E3B23C;padding:7px 13px;border-radius:999px;box-shadow:0 6px 18px rgba(0,0,0,.35);">
+              <span style="width:6px;height:6px;border-radius:50%;background:#D6291F;"></span>Mooca · desde 1987
+            </span>
+            <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#FBF8F1;text-shadow:0 2px 12px rgba(0,0,0,.7);line-height:1.15;">O mesmo forno,<br>no mesmo lugar.</span>
+          </div>
         </div>
       </div>
       <div>
@@ -264,13 +314,13 @@
               <div style="color:#FBF8F1;font-weight:600;">Sex, Sáb e Feriados</div>
               <div style="color:rgba(251,248,241,.65);">18h às 23h30</div>
             </div>
-            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;color:#E3B23C;margin-top:4px;">Também no iFood · 99 · Ketaa</div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;color:#E3B23C;margin-top:4px;">Também no iFood · 99 · Keeta</div>
           </div>
         </div>
       </div>
       <div style="border-top:1px solid rgba(251,248,241,.12);margin-top:56px;padding-top:26px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;">
         <span style="font-size:13px;color:rgba(251,248,241,.45);">© 1987–2026 Pomodori Pizzaria · Mooca, São Paulo</span>
-        <span style="font-size:13px;color:rgba(251,248,241,.45);max-width:560px;text-align:right;">Os pedidos são feitos pelo WhatsApp ou pelos apps (iFood, 99, Ketaa). Este site apresenta a marca e não processa pedidos nem pagamentos.</span>
+        <span style="font-size:13px;color:rgba(251,248,241,.45);max-width:560px;text-align:right;">Os pedidos são feitos pelo WhatsApp ou pelos apps (iFood, 99, Keeta). Este site apresenta a marca e não processa pedidos nem pagamentos.</span>
       </div>
     </div>
   </section>

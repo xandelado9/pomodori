@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Controle de Despesas</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --accent: #6366f1;
+    --border: #334155;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+  .container { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-bottom: 24px; font-size: .9rem; }
+
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .summary .box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .box .label { font-size: .75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+  .box .value { font-size: 1.25rem; font-weight: 700; margin-top: 6px; }
+  .value.green { color: var(--green); }
+  .value.red { color: var(--red); }
+
+  form {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 24px;
+    display: grid;
+    gap: 12px;
+  }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .row > * { flex: 1; min-width: 120px; }
+  input, select, button {
+    font-size: 1rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+  }
+  input::placeholder { color: var(--muted); }
+  .type-toggle { display: flex; gap: 8px; }
+  .type-toggle label {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: .15s;
+  }
+  .type-toggle input { display: none; }
+  .type-toggle input:checked + span { font-weight: 700; }
+  .type-toggle label:has(input[value="ganho"]:checked) { border-color: var(--green); color: var(--green); }
+  .type-toggle label:has(input[value="gasto"]:checked) { border-color: var(--red); color: var(--red); }
+  button.add {
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button.add:hover { opacity: .9; }
+
+  .list { list-style: none; display: grid; gap: 8px; }
+  .item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .item .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .item .desc { flex: 1; }
+  .item .desc small { display: block; color: var(--muted); font-size: .75rem; }
+  .item .amount { font-weight: 700; white-space: nowrap; }
+  .item .del {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; font-size: 1.1rem; padding: 4px 8px;
+  }
+  .item .del:hover { color: var(--red); }
+  .empty { text-align: center; color: var(--muted); padding: 32px; }
+
+  @media (max-width: 420px) {
+    .summary { grid-template-columns: 1fr; }
+    .box .value { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>💰 Controle de Despesas</h1>
+  <p class="subtitle">Registre seus ganhos e gastos. Os dados ficam salvos neste navegador.</p>
+
+  <div class="summary">
+    <div class="box"><div class="label">Ganhos</div><div class="value green" id="totalGanhos">R$ 0,00</div></div>
+    <div class="box"><div class="label">Gastos</div><div class="value red" id="totalGastos">R$ 0,00</div></div>
+    <div class="box"><div class="label">Saldo</div><div class="value" id="saldo">R$ 0,00</div></div>
+  </div>
+
+  <form id="form">
+    <div class="type-toggle">
+      <label><input type="radio" name="tipo" value="ganho" checked><span>Ganho</span></label>
+      <label><input type="radio" name="tipo" value="gasto"><span>Gasto</span></label>
+    </div>
+    <input type="text" id="descricao" placeholder="Descrição (ex: Salário, Mercado...)" required>
+    <div class="row">
+      <input type="number" id="valor" placeholder="Valor (R$)" step="0.01" min="0" required>
+      <button type="submit" class="add">Adicionar</button>
+    </div>
+  </form>
+
+  <ul class="list" id="lista"></ul>
+</div>
+
+<script>
+  const STORAGE_KEY = "financas_lancamentos";
+  let lancamentos = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+
+  const form = document.getElementById("form");
+  const lista = document.getElementById("lista");
+  const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  function salvar() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lancamentos));
+  }
+
+  function render() {
+    const ganhos = lancamentos.filter(l => l.tipo === "ganho").reduce((s, l) => s + l.valor, 0);
+    const gastos = lancamentos.filter(l => l.tipo === "gasto").reduce((s, l) => s + l.valor, 0);
+    const saldo = ganhos - gastos;
+
+    document.getElementById("totalGanhos").textContent = brl(ganhos);
+    document.getElementById("totalGastos").textContent = brl(gastos);
+    const saldoEl = document.getElementById("saldo");
+    saldoEl.textContent = brl(saldo);
+    saldoEl.className = "value " + (saldo >= 0 ? "green" : "red");
+
+    if (lancamentos.length === 0) {
+      lista.innerHTML = '<li class="empty">Nenhum lançamento ainda.</li>';
+      return;
+    }
+
+    lista.innerHTML = "";
+    lancamentos.slice().reverse().forEach(l => {
+      const li = document.createElement("li");
+      li.className = "item";
+      const cor = l.tipo === "ganho" ? "var(--green)" : "var(--red)";
+      const sinal = l.tipo === "ganho" ? "+" : "−";
+      li.innerHTML = `
+        <span class="dot" style="background:${cor}"></span>
+        <div class="desc">${escapeHtml(l.descricao)}<small>${l.data}</small></div>
+        <span class="amount" style="color:${cor}">${sinal} ${brl(l.valor)}</span>
+        <button class="del" title="Remover">✕</button>
+      `;
+      li.querySelector(".del").onclick = () => {
+        lancamentos = lancamentos.filter(x => x.id !== l.id);
+        salvar(); render();
+      };
+      lista.appendChild(li);
+    });
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  }
+
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const tipo = document.querySelector('input[name="tipo"]:checked').value;
+    const descricao = document.getElementById("descricao").value.trim();
+    const valor = parseFloat(document.getElementById("valor").value);
+    if (!descricao || !(valor > 0)) return;
+
+    lancamentos.push({
+      id: Date.now(),
+      tipo,
+      descricao,
+      valor,
+      data: new Date().toLocaleDateString("pt-BR")
+    });
+    salvar(); render();
+    form.reset();
+    document.querySelector('input[value="ganho"]').checked = true;
+    document.getElementById("descricao").focus();
+  });
+
+  render();
+</script>
+</body>
+</html>
