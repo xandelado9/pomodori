@@ -19,6 +19,13 @@
     .cardapio-h1 { font-size: 44px !important; }
     .cardapio-galeria { grid-template-columns: 1fr 1fr !important; }
   }
+  /* efeito de zoom no hover das fotos da galeria */
+  .zoom-photo { overflow: hidden; }
+  .zoom-photo img { transition: transform .7s ease, filter .5s ease; }
+  .zoom-photo:hover img { transform: scale(1.06); filter: saturate(1.25) contrast(1.1) brightness(1.05); }
+  @media (prefers-reduced-motion: reduce) {
+    .zoom-photo:hover img { transform: none; }
+  }
 </style>
 </head>
 <body>
@@ -55,16 +62,16 @@
     <h2 style="font-family:'DM Serif Display',serif;font-size:34px;line-height:1.1;margin:0 0 6px;text-align:center;color:#FBF8F1;">Temos pizzas salgadas <span style="color:#E3B23C;">e doces</span></h2>
     <p style="text-align:center;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(251,248,241,.6);margin:0 0 24px;">64 sabores salgados + pizzas doces</p>
     <div class="cardapio-galeria" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-      <figure style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+      <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
         <img src="paracardapio1.jpg" alt="Pizza salgada da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
-      <figure style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+      <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
         <img src="paracardapio2.jpg" alt="Pizza salgada da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
-      <figure style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+      <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
         <img src="pizzadoce.jpg" alt="Pizza doce da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
-      <figure style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
+      <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
         <img src="doceuva.jpg" alt="Pizza doce de uva com chocolate da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
     </div>
