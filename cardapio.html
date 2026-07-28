@@ -2,27 +2,107 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cardápio — Pomodori Pizzaria</title>
 <meta name="description" content="Cardápio completo da Pomodori: 64 pizzas tradicionais, novidades e pizzas doces, assadas no forno a lenha. Delivery na Mooca.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Baloo 2 saiu: nunca foi usada nesta pagina. Figtree:500 saiu: zero usos. -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body { margin: 0; font-family: 'Figtree', system-ui, sans-serif; background: #0D0B08; color: #FBF8F1; -webkit-font-smoothing: antialiased; }
   a { color: #E3B23C; text-decoration: none; }
   a:hover { color: #FBF8F1; }
+  img { max-width: 100%; }
+  section[id] { scroll-margin-top: 130px; }
+
+  /* logo: espaco reservado antes do JS injetar a imagem (6.4x o data-size) */
+  .logo { display: inline-flex; }
+  .logo[data-size="15"] { width: 96px; height: 96px; }
+  .logo[data-size="16"] { width: 102px; height: 102px; }
+
+  /* ---------- navegação do cabeçalho ---------- */
+  .hdr-nav { display: flex; align-items: center; gap: 22px; }
+  .hdr-nav a { color: #FBF8F1; font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .hdr-secao { display: none; }
+
+  /* ---------- foco de teclado visível ----------
+     O colarinho escuro mantem o anel legivel inclusive dentro do
+     bloco vermelho de CTA, onde o dourado sozinho se perde. */
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #E3B23C;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px #0D0B08;
+    border-radius: 6px;
+  }
+
+  /* ---------- alvos de toque: mínimo de 44px ---------- */
+  @media (pointer: coarse) {
+    .hdr-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  }
+
+  /* ---------- tablet e abaixo ---------- */
   @media (max-width: 760px) {
     .rgrid { grid-template-columns: 1fr !important; gap: 0 !important; }
-    .cardapio-h1 { font-size: 44px !important; }
     .cardapio-galeria { grid-template-columns: 1fr 1fr !important; }
+    section[id] { scroll-margin-top: 136px; }
+    /* cabeçalho em duas faixas, igual ao index: logo + pedido em cima, navegação embaixo */
+    .hdr-inner { padding: 10px 18px !important; gap: 9px 14px !important; }
+    .hdr-logo { margin-right: auto; }
+    /* encolhe a caixa reservada, nao so a imagem — senao sobra vao no header */
+    .hdr-logo .logo { width: 54px !important; height: 54px !important; }
+    .hdr-logo img { height: 54px !important; width: 54px !important; }
+    .hdr-cta { order: 2; }
+    .hdr-nav {
+      order: 3;
+      flex-basis: 100%;
+      gap: 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      border-top: 1px solid rgba(227,178,60,.16);
+      padding-top: 9px;
+    }
+    .hdr-nav::-webkit-scrollbar { display: none; }
+    .hdr-secao { display: inline-flex; }
+    .sec-pad { padding-left: 20px !important; padding-right: 20px !important; }
+    .cta-bloco { padding: 44px 24px !important; }
+    .sec-titulo { font-size: 30px !important; }
   }
-  /* efeito de zoom no hover das fotos da galeria */
+  @media (max-width: 520px) {
+    .sec-pad { padding-left: 16px !important; padding-right: 16px !important; }
+    .sec-titulo { font-size: 26px !important; }
+    .cta-bloco { padding: 36px 18px !important; border-radius: 18px !important; }
+    .cta-bloco h2 { font-size: 30px !important; }
+    /* botões de pedido ocupam a linha toda — polegar não erra */
+    .cta-apps { flex-direction: column; align-items: stretch; }
+    .cta-apps a { width: 100%; text-align: center; font-size: 16px !important; }
+    .hero-tags span { font-size: 12px !important; padding: 8px 14px !important; }
+  }
+
+  /* ---------- safe-area (notch e barra de gestos) ---------- */
+  @supports (padding: max(0px)) {
+    .hdr-inner {
+      padding-left: max(28px, env(safe-area-inset-left)) !important;
+      padding-right: max(28px, env(safe-area-inset-right)) !important;
+    }
+    .cta-safe { padding-bottom: max(90px, env(safe-area-inset-bottom)) !important; }
+    @media (max-width: 760px) {
+      .hdr-inner {
+        padding-left: max(18px, env(safe-area-inset-left)) !important;
+        padding-right: max(18px, env(safe-area-inset-right)) !important;
+      }
+    }
+  }
+
+  /* efeito de zoom no hover das fotos da galeria — só onde há cursor */
   .zoom-photo { overflow: hidden; }
   .zoom-photo img { transition: transform .7s ease, filter .5s ease; }
-  .zoom-photo:hover img { transform: scale(1.06); filter: saturate(1.25) contrast(1.1) brightness(1.05); }
+  @media (hover: hover) and (pointer: fine) {
+    .zoom-photo:hover img { transform: scale(1.06); filter: saturate(1.25) contrast(1.1) brightness(1.05); }
+  }
   @media (prefers-reduced-motion: reduce) {
     .zoom-photo:hover img { transform: none; }
   }
@@ -34,23 +114,26 @@
 
   <!-- HEADER -->
   <header style="position:sticky;top:0;z-index:50;background:rgba(13,11,8,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(227,178,60,.22);">
-    <div style="max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
-      <a href="index.html" style="display:flex;align-items:center;">
+    <div class="hdr-inner" style="max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <a class="hdr-logo" href="index.html" style="display:flex;align-items:center;margin-right:auto;">
         <span class="logo" data-size="15"></span>
       </a>
-      <div style="display:flex;align-items:center;gap:22px;flex-wrap:wrap;">
-        <a href="index.html" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">← Voltar ao site</a>
-        <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="background:#D6291F;color:#FBF8F1;font-weight:700;font-size:14px;padding:11px 22px;border-radius:999px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir agora</a>
-      </div>
+      <nav class="hdr-nav" aria-label="Navegação do cardápio">
+        <a href="index.html" style-hover="color:#E3B23C;">← Voltar ao site</a>
+        <a class="hdr-secao" href="#sec-tradicionais" style-hover="color:#E3B23C;">Tradicionais</a>
+        <a class="hdr-secao" href="#sec-novidades" style-hover="color:#E3B23C;">Novidades</a>
+        <a class="hdr-secao" href="#sec-doces" style-hover="color:#E3B23C;">Doces</a>
+      </nav>
+      <a class="hdr-cta" href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="background:#D6291F;color:#FBF8F1;font-weight:700;font-size:14px;padding:13px 22px;border-radius:999px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir agora</a>
     </div>
   </header>
 
   <!-- HERO -->
-  <section style="max-width:1120px;margin:0 auto;padding:64px 28px 40px;text-align:center;">
+  <section class="sec-pad" style="max-width:1120px;margin:0 auto;padding:64px 28px 40px;text-align:center;">
     <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#E3B23C;">Cardápio completo</span>
-    <h1 class="cardapio-h1" style="font-family:'DM Serif Display',serif;font-size:64px;line-height:1;margin:16px 0 20px;">Todos os sabores</h1>
-    <p style="font-size:19px;line-height:1.55;color:rgba(251,248,241,.72);max-width:640px;margin:0 auto;">Todas as pizzas são preparadas com molho de tomate, orégano e azeitonas, e assadas no forno a lenha. Só trabalhamos com produtos de primeira linha.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px;">
+    <h1 class="cardapio-h1" style="font-family:'DM Serif Display',serif;font-size:clamp(38px,9vw,64px);line-height:1.02;margin:16px 0 20px;">Todos os sabores</h1>
+    <p style="font-size:clamp(16px,4vw,19px);line-height:1.55;color:rgba(251,248,241,.72);max-width:640px;margin:0 auto;">Todas as pizzas são preparadas com molho de tomate, orégano e azeitonas, e assadas no forno a lenha. Só trabalhamos com produtos de primeira linha.</p>
+    <div class="hero-tags" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px;">
       <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Massa: fina · média · grossa</span>
       <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Temos calzone</span>
       <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:1px;color:#E3B23C;border:1px solid rgba(227,178,60,.4);padding:9px 18px;border-radius:999px;">Delivery · Mooca</span>
@@ -58,29 +141,29 @@
   </section>
 
   <!-- GALERIA -->
-  <section style="max-width:1120px;margin:0 auto;padding:20px 28px 8px;">
-    <h2 style="font-family:'DM Serif Display',serif;font-size:34px;line-height:1.1;margin:0 0 6px;text-align:center;color:#FBF8F1;">Temos pizzas salgadas <span style="color:#E3B23C;">e doces</span></h2>
+  <section class="sec-pad" style="max-width:1120px;margin:0 auto;padding:20px 28px 8px;">
+    <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-size:34px;line-height:1.1;margin:0 0 6px;text-align:center;color:#FBF8F1;">Temos pizzas salgadas <span style="color:#E3B23C;">e doces</span></h2>
     <p style="text-align:center;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(251,248,241,.6);margin:0 0 24px;">64 sabores salgados + pizzas doces</p>
     <div class="cardapio-galeria" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
       <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
-        <img src="paracardapio1.jpg" alt="Pizza salgada da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <img src="paracardapio1.jpg" width="677" height="842" loading="lazy" decoding="async" alt="Pizza salgada da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
       <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(227,178,60,.28);box-shadow:0 16px 34px rgba(0,0,0,.45);">
-        <img src="paracardapio2.jpg" alt="Pizza salgada da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <img src="paracardapio2.jpg" width="672" height="842" loading="lazy" decoding="async" alt="Pizza salgada da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
       <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
-        <img src="pizzadoce.jpg" alt="Pizza doce da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <img src="pizzadoce.jpg" width="631" height="845" loading="lazy" decoding="async" alt="Pizza doce da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
       <figure class="zoom-photo" style="margin:0;aspect-ratio:1/1;border-radius:16px;overflow:hidden;border:1px solid rgba(214,41,31,.32);box-shadow:0 16px 34px rgba(0,0,0,.45);">
-        <img src="doceuva.jpg" alt="Pizza doce de uva com chocolate da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
+        <img src="doceuva.jpg" width="726" height="847" loading="lazy" decoding="async" alt="Pizza doce de uva com chocolate da Pomodori" style="width:100%;height:100%;object-fit:cover;display:block;filter:saturate(1.1) contrast(1.04);">
       </figure>
     </div>
   </section>
 
   <!-- TRADICIONAIS -->
-  <section style="max-width:1120px;margin:0 auto;padding:32px 28px 20px;">
+  <section id="sec-tradicionais" class="sec-pad" style="max-width:1120px;margin:0 auto;padding:32px 28px 20px;">
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;">
-      <h2 style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#FBF8F1;">Pizzas tradicionais</h2>
+      <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#FBF8F1;">Pizzas tradicionais</h2>
       <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
       <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">01–64</span>
     </div>
@@ -88,29 +171,29 @@
   </section>
 
   <!-- NOVIDADES -->
-  <section style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
+  <section id="sec-novidades" class="sec-pad" style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;">
-      <h2 style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#E3B23C;">Novidades</h2>
+      <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#E3B23C;">Novidades</h2>
       <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
     </div>
     <div id="novidades" class="rgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"></div>
   </section>
 
   <!-- DOCES -->
-  <section style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
+  <section id="sec-doces" class="sec-pad" style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
     <div style="display:flex;align-items:center;gap:16px;margin-bottom:28px;">
-      <h2 style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#FBF8F1;">Pizzas doces</h2>
+      <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-size:38px;margin:0;color:#FBF8F1;">Pizzas doces</h2>
       <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
     </div>
     <div id="doces" class="rgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0 48px;"></div>
   </section>
 
   <!-- CTA -->
-  <section style="max-width:1120px;margin:40px auto 0;padding:0 28px 90px;">
-    <div style="background:#D6291F;border-radius:22px;padding:56px 40px;text-align:center;">
-      <h2 style="font-family:'DM Serif Display',serif;font-size:44px;margin:0 0 12px;color:#FBF8F1;">Escolheu? É só chamar.</h2>
-      <p style="font-size:18px;color:rgba(251,248,241,.9);margin:0 0 30px;">Peça pelo WhatsApp ou pelos apps. Sai do forno e vai quentinho pra sua porta.</p>
-      <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+  <section class="sec-pad cta-safe" style="max-width:1120px;margin:40px auto 0;padding:0 28px 90px;">
+    <div class="cta-bloco" style="background:#D6291F;border-radius:22px;padding:56px 40px;text-align:center;">
+      <h2 style="font-family:'DM Serif Display',serif;font-size:clamp(30px,7vw,44px);line-height:1.05;margin:0 0 12px;color:#FBF8F1;">Escolheu? É só chamar.</h2>
+      <p style="font-size:clamp(16px,4vw,18px);color:rgba(251,248,241,.9);margin:0 0 30px;">Peça pelo WhatsApp ou pelos apps. Sai do forno e vai quentinho pra sua porta.</p>
+      <div class="cta-apps" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
         <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="background:#0D0B08;color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir no WhatsApp</a>
         <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no iFood</a>
         <a href="https://www.99app.com/" target="_blank" rel="noopener" style="background:transparent;border:2px solid rgba(251,248,241,.6);color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:12px;" style-hover="border-color:#0D0B08;background:#0D0B08;">Pedir no 99</a>

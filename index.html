@@ -2,14 +2,19 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pomodori Pizzaria — Forno a lenha na Mooca desde 1987</title>
 <meta name="description" content="Pizzaria delivery na Mooca desde 1987. Massa de fermentação natural, assada no forno a lenha e entregue ainda quente. Peça pelo WhatsApp, iFood, 99 ou Keeta.">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous">
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- Baloo 2 saiu: 3 pesos baixados para um unico rotulo de 12px no mapa.
+     Figtree:500 saiu: zero usos na pagina. -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<!-- A foto do forno e o elemento LCP: pedida cedo e com prioridade. -->
+<link rel="preload" as="image" href="pizza-forno.jpg" fetchpriority="high">
+<!-- Leaflet (162 KB) saiu do <head>: bloqueava o render inteiro por um mapa
+     que so aparece na quinta secao. Agora e carregado sob demanda, pelo
+     script no fim do body, quando o mapa se aproxima da viewport. -->
 <style>
   * { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -18,6 +23,14 @@
   a:hover { color: #1B4A3F; }
   section[id] { scroll-margin-top: 88px; }
   @keyframes ember { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: .9; transform: scale(1.06); } }
+  /* ---------- logo: espaco reservado antes do JS injetar a imagem ----------
+     O span nasce vazio e a logo entra em `DOMContentLoaded`. Sem reserva,
+     o cabecalho grudado saltava em todo carregamento. 6.4x o data-size,
+     a mesma formula do app.js. */
+  .logo { display: inline-flex; }
+  .logo[data-size="15"] { width: 96px; height: 96px; }
+  .logo[data-size="16"] { width: 102px; height: 102px; }
+
   /* ---------- camada responsiva ---------- */
   img, svg { max-width: 100%; }
   .leaflet-container img { max-width: none !important; }
@@ -56,11 +69,144 @@
     .foot-bottom span { text-align: left !important; max-width: none !important; }
     .sec-head { gap: 18px !important; }
   }
-  /* efeito de zoom no hover das fotos (hero e história) */
+  /* efeito de zoom no hover das fotos (hero e história) — só onde há cursor */
   .zoom-photo img { transition: transform .7s ease, filter .5s ease; }
-  .zoom-photo:hover img { transform: scale(1.06); filter: saturate(1.25) contrast(1.1) brightness(1.05); }
+  @media (hover: hover) and (pointer: fine) {
+    .zoom-photo:hover img { transform: scale(1.06); filter: saturate(1.25) contrast(1.1) brightness(1.05); }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .zoom-photo:hover img { transform: none; }
+    /* o filtro tambem e movimento percebido: era uma troca de cor de .5s */
+    .zoom-photo:hover img { transform: none; filter: none; }
+    /* a brasa pulsante do hero e a maior animacao da pagina */
+    .hero-ember { animation: none !important; }
+  }
+
+  /* ---------- foco de teclado visível sobre os dois fundos ----------
+     Dourado sozinho da 1.85:1 sobre o creme e some. O colarinho escuro
+     do box-shadow faz o anel ler sobre creme, sobre o escuro e sobre o
+     vermelho do CTA. */
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #E3B23C;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px #0D0B08;
+    border-radius: 6px;
+  }
+
+  /* ---------- alvos de toque: mínimo de 44px ---------- */
+  @media (pointer: coarse) {
+    .hdr-links a, .foot-links a {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+    }
+  }
+
+  /* ---------- retrato/paisagem: fotos e mapa não podem virar torres ----------
+     Abaixo de 900px tudo vira coluna única; sem limite, uma foto 3/4 em paisagem
+     ocupa mais de uma tela inteira de altura. */
+  @media (max-width: 900px) {
+    .hero-photo-wrap, .sobre-photo-wrap, .mapa-wrap {
+      max-width: 440px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+  @media (max-width: 900px) and (orientation: landscape) {
+    .hero-photo-wrap, .sobre-photo-wrap, .mapa-wrap { max-width: 330px; }
+  }
+
+  /* ---------- mapa: no toque, só pan/zoom depois de um tap explícito ---------- */
+  .mapa-ativar {
+    position: absolute; inset: 0; z-index: 600;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,11,8,.32);
+    border: 0; width: 100%; padding: 0;
+    font-family: 'Figtree', system-ui, sans-serif; font-size: 15px; font-weight: 700;
+    color: #0D0B08; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .mapa-ativar span {
+    background: #E3B23C; padding: 12px 20px; border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(13,11,8,.35);
+  }
+
+  /* ---------- safe-area (notch e barra de gestos) ---------- */
+  @supports (padding: max(0px)) {
+    .hdr-inner {
+      padding-left: max(28px, env(safe-area-inset-left)) !important;
+      padding-right: max(28px, env(safe-area-inset-right)) !important;
+    }
+    .foot-safe { padding-bottom: max(40px, env(safe-area-inset-bottom)) !important; }
+    @media (max-width: 640px) {
+      .hdr-inner {
+        padding-left: max(18px, env(safe-area-inset-left)) !important;
+        padding-right: max(18px, env(safe-area-inset-right)) !important;
+      }
+    }
+  }
+
+  /* ---------- pilares: lenha · tempo · pressa ---------- */
+  .pilares { position: relative; overflow: hidden; }
+  .pilares::before {
+    content: "";
+    position: absolute; left: -18%; right: -12%; top: -14%; bottom: -14%;
+    background:
+      radial-gradient(46% 46% at 5% 26%, rgba(214,41,31,.13), transparent 70%),
+      radial-gradient(52% 48% at 94% 84%, rgba(227,178,60,.22), transparent 72%);
+    pointer-events: none;
+  }
+  .pilar {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0,.92fr) minmax(0,1.08fr);
+    gap: 0 56px;
+    align-items: baseline;
+    padding: 38px 0;
+    border-top: 1px solid rgba(13,11,8,.13);
+  }
+  .pilar:last-of-type { border-bottom: 1px solid rgba(13,11,8,.13); }
+  .pilar-head { margin: 0; }
+  .pilar-word {
+    display: block;
+    font-family: 'DM Serif Display', serif;
+    font-weight: 400;
+    font-size: clamp(54px, 8.2vw, 88px);
+    line-height: .9;
+    letter-spacing: -.03em;
+    transition: transform .55s cubic-bezier(.16,1,.3,1);
+  }
+  .pilar-label {
+    display: block;
+    margin-top: 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+  }
+  .pilar-body { margin: 0; font-size: 19px; line-height: 1.65; color: #4a453d; max-width: 60ch; }
+  @media (hover: hover) and (pointer: fine) {
+    .pilar:hover .pilar-word { transform: translateX(10px); }
+  }
+  /* entrada escalonada — o estado padrão (sem JS) já é visível */
+  .js-reveal .pilar-word, .js-reveal .pilar-label, .js-reveal .pilar-body {
+    opacity: 0; transform: translateY(26px); filter: blur(7px);
+  }
+  .js-reveal.is-in .pilar-word, .js-reveal.is-in .pilar-label, .js-reveal.is-in .pilar-body {
+    opacity: 1; transform: none; filter: none;
+    transition: opacity .9s cubic-bezier(.16,1,.3,1), transform .9s cubic-bezier(.16,1,.3,1), filter .9s cubic-bezier(.16,1,.3,1);
+  }
+  .js-reveal.is-in .pilar-label { transition-delay: .1s; }
+  .js-reveal.is-in .pilar-body { transition-delay: .16s; }
+  @media (max-width: 900px) {
+    .pilar { grid-template-columns: 1fr; gap: 18px 0; padding: 34px 0; }
+  }
+  @media (max-width: 560px) {
+    .pilar { padding: 30px 0; }
+    .pilar-label { margin-top: 12px; letter-spacing: 2px; }
+    .pilar-body { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .pilar:hover .pilar-word { transform: none; }
   }
 
 </style>
@@ -88,7 +234,7 @@
 
   <!-- HERO -->
   <section id="topo" style="position:relative;background:#0D0B08;color:#FBF8F1;overflow:hidden;">
-    <div style="position:absolute;right:-8%;top:20%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(214,41,31,.55),rgba(227,178,60,.15) 45%,transparent 68%);filter:blur(10px);animation:ember 5s ease-in-out infinite;pointer-events:none;"></div>
+    <div class="hero-ember" style="position:absolute;right:-8%;top:20%;width:640px;height:640px;border-radius:50%;background:radial-gradient(circle,rgba(214,41,31,.55),rgba(227,178,60,.15) 45%,transparent 68%);filter:blur(10px);animation:ember 5s ease-in-out infinite;pointer-events:none;"></div>
     <div class="rgrid hero-pad" style="max-width:1200px;margin:0 auto;padding:84px 28px 92px;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;position:relative;">
       <div>
         <div style="display:inline-flex;align-items:center;gap:10px;border:1px solid rgba(227,178,60,.5);background:rgba(227,178,60,.08);padding:8px 16px;border-radius:999px;margin-bottom:26px;">
@@ -123,7 +269,7 @@
       </div>
       <div class="hero-photo-wrap" style="position:relative;">
         <div class="zoom-photo" style="position:relative;z-index:1;aspect-ratio:3/4;border-radius:999px 999px 20px 20px;overflow:hidden;border:1px solid rgba(227,178,60,.35);box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 6px rgba(214,41,31,.06);">
-          <img src="pizza-forno.jpg" alt="Pizza artesanal saindo do forno a lenha da Pomodori" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
+          <img src="pizza-forno.jpg" alt="Pizza artesanal saindo do forno a lenha da Pomodori" width="841" height="810" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
           <!-- brilho de brasa no topo -->
           <div style="position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,rgba(227,178,60,.28),transparent 55%);mix-blend-mode:screen;pointer-events:none;"></div>
           <!-- gradiente escuro embaixo + vinheta -->
@@ -149,22 +295,28 @@
   </section>
 
   <!-- DIFERENCIAIS -->
-  <section class="s-pad" style="max-width:1200px;margin:0 auto;padding:88px 28px;">
-    <div class="rgrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px;">
-      <div style="border-top:2px solid #D6291F;padding-top:26px;">
-        <div style="width:54px;height:54px;border:2px solid #D6291F;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;color:#D6291F;font-size:18px;margin-bottom:20px;">01</div>
-        <h3 style="font-family:'DM Serif Display',serif;font-size:27px;margin:0 0 12px;color:#1B4A3F;">Forno a lenha tradicional</h3>
-        <p style="font-size:16px;line-height:1.6;color:#4a453d;margin:0;">Assada na brasa, no mesmo forno desde 1987. Fundo fino, crocante, com aquele gostinho de fogo que só a lenha dá.</p>
+  <section class="pilares">
+    <div class="s-pad" style="position:relative;max-width:1200px;margin:0 auto;padding:96px 28px;">
+      <div class="pilar">
+        <h3 class="pilar-head">
+          <span class="pilar-word" style="color:#D6291F;">Lenha.</span>
+          <span class="pilar-label" style="color:#D6291F;">Forno a lenha tradicional</span>
+        </h3>
+        <p class="pilar-body">Assada na brasa, no mesmo forno desde 1987. Fundo fino, crocante, com aquele gostinho de fogo que só a lenha dá.</p>
       </div>
-      <div style="border-top:2px solid #E3B23C;padding-top:26px;">
-        <div style="width:54px;height:54px;border:2px solid #E3B23C;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;color:#B8862a;font-size:18px;margin-bottom:20px;">02</div>
-        <h3 style="font-family:'DM Serif Display',serif;font-size:27px;margin:0 0 12px;color:#1B4A3F;">Massa de fermentação natural</h3>
-        <p style="font-size:16px;line-height:1.6;color:#4a453d;margin:0;">A massa descansa o tempo que precisa. Fica leve, macia e mais fácil de digerir. Sem pressa, do jeito certo.</p>
+      <div class="pilar">
+        <h3 class="pilar-head">
+          <span class="pilar-word" style="color:#94661A;">Tempo.</span>
+          <span class="pilar-label" style="color:#94661A;">Massa de fermentação natural</span>
+        </h3>
+        <p class="pilar-body">A massa descansa o tempo que precisa. Fica leve, macia e mais fácil de digerir. Sem pressa, do jeito certo.</p>
       </div>
-      <div style="border-top:2px solid #1B4A3F;padding-top:26px;">
-        <div style="width:54px;height:54px;border:2px solid #1B4A3F;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-weight:700;color:#1B4A3F;font-size:18px;margin-bottom:20px;">03</div>
-        <h3 style="font-family:'DM Serif Display',serif;font-size:27px;margin:0 0 12px;color:#1B4A3F;">Entrega rápida</h3>
-        <p style="font-size:16px;line-height:1.6;color:#4a453d;margin:0;">Saiu do forno, foi pra rua. Em média <strong style="color:#D6291F;">40 minutos</strong> e a pizza chega quente na Mooca e região.</p>
+      <div class="pilar">
+        <h3 class="pilar-head">
+          <span class="pilar-word" style="color:#1B4A3F;">Pressa.</span>
+          <span class="pilar-label" style="color:#1B4A3F;">Entrega rápida</span>
+        </h3>
+        <p class="pilar-body">Saiu do forno, foi pra rua. Em média <strong style="color:#D6291F;">40 minutos</strong> e a pizza chega quente na Mooca e região.</p>
       </div>
     </div>
   </section>
@@ -232,9 +384,9 @@
   <!-- SOBRE -->
   <section id="sobre" class="s-pad" style="max-width:1200px;margin:0 auto;padding:96px 28px;">
     <div class="rgrid" style="display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center;">
-      <div>
+      <div class="sobre-photo-wrap">
         <div class="zoom-photo" style="position:relative;aspect-ratio:4/5;border-radius:20px 20px 999px 999px;overflow:hidden;border:1px solid rgba(227,178,60,.35);box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 6px rgba(214,41,31,.06);">
-          <img src="lojaporfora.jpg" alt="Fachada da Pomodori Pizzaria na Mooca" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
+          <img src="lojaporfora.jpg" alt="Fachada da Pomodori Pizzaria na Mooca" width="847" height="635" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
           <!-- brilho de brasa no topo -->
           <div style="position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,rgba(227,178,60,.28),transparent 55%);mix-blend-mode:screen;pointer-events:none;"></div>
           <!-- gradiente escuro embaixo + vinheta -->
@@ -254,11 +406,11 @@
         <p style="font-size:18px;line-height:1.65;color:#4a453d;margin:0 0 18px;">A Pomodori nasceu na Mooca e nunca saiu de lá. Quase quatro décadas fazendo pizza do mesmo jeito: massa que fermenta com calma e forno a lenha aceso todo dia.</p>
         <p style="font-size:18px;line-height:1.65;color:#4a453d;margin:0 0 34px;">O forno é o símbolo dessa história. É ele que dá a borda tostada, o fundo crocante e o cheiro de brasa que atravessa o bairro. Tradição de família, entregue na sua casa.</p>
         <div class="stats-row" style="display:flex;gap:40px;flex-wrap:wrap;">
-          <div style="border-left:3px solid #D6291F;padding-left:18px;">
+          <div style="border-top:1px solid #D6291F;padding-top:16px;">
             <div style="font-family:'DM Serif Display',serif;font-size:52px;line-height:1;color:#D6291F;">1987</div>
             <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8a7f6a;margin-top:6px;">no mesmo local</div>
           </div>
-          <div style="border-left:3px solid #1B4A3F;padding-left:18px;">
+          <div style="border-top:1px solid #1B4A3F;padding-top:16px;">
             <div style="font-family:'DM Serif Display',serif;font-size:52px;line-height:1;color:#1B4A3F;">39</div>
             <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#8a7f6a;margin-top:6px;">anos de forno a lenha</div>
           </div>
@@ -278,10 +430,10 @@
           <p style="font-size:15px;line-height:1.6;color:#6a6154;margin:0 0 26px;">Atendemos <strong style="color:#1B4A3F;">Mooca, Alto da Mooca, Parque da Mooca, Brás, Belém, Tatuapé, Água Rasa, Cambuci, Ipiranga, Vila Prudente e Vila Zelina.</strong> Não achou seu bairro? Chama no WhatsApp que a gente confirma.</p>
           <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" class="cta-main" style="display:inline-flex;align-items:center;gap:10px;background:#D6291F;color:#FBF8F1;font-weight:800;font-size:16px;padding:15px 28px;border-radius:12px;" style-hover="background:#1B4A3F;">Confirmar meu endereço →</a>
         </div>
-        <div>
+        <div class="mapa-wrap">
           <div class="mapa" style="position:relative;aspect-ratio:1/1;border-radius:20px;overflow:hidden;border:1px solid rgba(27,74,63,.22);box-shadow:0 24px 50px rgba(13,11,8,.12);background:#f2ecde;">
             <div id="mapa-entrega" style="position:absolute;inset:0;z-index:1;"></div>
-            <img class="motoboy" src="motoboy.png" alt="Motoboy de entrega da Pomodori" style="position:absolute;right:12px;bottom:12px;width:78px;height:auto;z-index:500;filter:drop-shadow(0 6px 10px rgba(13,11,8,.3));pointer-events:none;">
+            <img class="motoboy" src="motoboy.png" alt="Motoboy de entrega da Pomodori" width="514" height="361" loading="lazy" decoding="async" style="position:absolute;right:12px;bottom:12px;width:78px;height:auto;z-index:500;filter:drop-shadow(0 6px 10px rgba(13,11,8,.3));pointer-events:none;">
           </div>
           <div class="mapa-legend" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:16px;font-family:'Space Mono',monospace;font-size:12px;color:#8a7f6a;letter-spacing:.5px;">
             <span style="display:inline-flex;align-items:center;gap:7px;"><span style="width:14px;height:14px;border:2px dashed rgba(214,41,31,.5);border-radius:50%;display:inline-block;"></span>raio de 3 km · ≈ 40 min</span>
@@ -295,7 +447,7 @@
 
   <!-- CONTATO / FOOTER -->
   <section id="contato" style="background:#0D0B08;color:#FBF8F1;">
-    <div class="s-pad" style="max-width:1200px;margin:0 auto;padding:88px 28px 40px;">
+    <div class="s-pad foot-safe" style="max-width:1200px;margin:0 auto;padding:88px 28px 40px;">
       <div class="rgrid" style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:48px;">
         <div>
           <div style="margin-bottom:24px;"><span class="logo" data-size="16"></span></div>
@@ -304,7 +456,7 @@
         </div>
         <div>
           <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#E3B23C;margin-bottom:18px;">Contato</div>
-          <div style="display:flex;flex-direction:column;gap:12px;font-size:16px;color:rgba(251,248,241,.85);">
+          <div class="foot-links" style="display:flex;flex-direction:column;gap:12px;font-size:16px;color:rgba(251,248,241,.85);">
             <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="color:#FBF8F1;" style-hover="color:#E3B23C;">WhatsApp · (11) 95551-4816</a>
             <a href="tel:+551120281316" style="color:#FBF8F1;" style-hover="color:#E3B23C;">(11) 2028-1316</a>
             <a href="tel:+551129669938" style="color:#FBF8F1;" style-hover="color:#E3B23C;">(11) 2966-9938</a>
@@ -343,10 +495,16 @@
   function init() {
     var el = document.getElementById('mapa-entrega');
     if (!el || !window.L) return;
+    // No toque o mapa nasce estatico: um dedo arrastando dentro dele
+    // sequestrava o scroll da pagina no meio do caminho para o pedido.
+    var toque = window.matchMedia('(pointer: coarse)').matches;
+
     var map = L.map(el, {
       center: POMODORI,
       zoom: 12,
       scrollWheelZoom: false,
+      dragging: !toque,
+      touchZoom: !toque,
       zoomControl: true,
       attributionControl: true
     });
@@ -370,7 +528,7 @@
         iconSize: [0, 0],
         html: '<div style="position:relative;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;">' +
               '<div style="width:16px;height:16px;border-radius:50%;background:#D6291F;border:3px solid #FBF8F1;box-shadow:0 2px 8px rgba(0,0,0,.35);"></div>' +
-              '<div style="margin-top:5px;font-family:\'Baloo 2\',system-ui,sans-serif;font-weight:800;font-size:12px;color:#D6291F;background:#FBF8F1;padding:2px 9px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.18);white-space:nowrap;">Pomodori · Mooca</div>' +
+              '<div style="margin-top:5px;font-family:\'Figtree\',system-ui,sans-serif;font-weight:800;font-size:12px;color:#D6291F;background:#FBF8F1;padding:2px 9px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.18);white-space:nowrap;">Pomodori · Mooca</div>' +
               '</div>'
       })
     }).addTo(map);
@@ -378,9 +536,104 @@
     map.fitBounds(raio.getBounds(), { padding: [10, 10] });
     map.once('focus', function () { map.scrollWheelZoom.enable(); });
     setTimeout(function () { map.invalidateSize(); }, 250);
+
+    // ...e o visitante libera o mapa quando quiser, com um toque explicito.
+    if (toque) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mapa-ativar';
+      btn.innerHTML = '<span>Tocar para explorar o mapa</span>';
+      btn.addEventListener('click', function () {
+        map.dragging.enable();
+        map.touchZoom.enable();
+        btn.parentNode.removeChild(btn);
+      });
+      el.parentNode.appendChild(btn);
+    }
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  /* ---- Leaflet sob demanda ----
+     162 KB (147 de JS + 15 de CSS) que antes bloqueavam o render de toda a
+     pagina por um mapa que so aparece na quinta secao. Agora so baixam
+     quando o mapa se aproxima da viewport. */
+  var CSS_URL = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  var CSS_SRI = 'sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H';
+  var JS_URL  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  var JS_SRI  = 'sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH';
+
+  // Carregar sob demanda cria uma falha nova: a rede pode cair no meio do
+  // scroll. Antes isso deixava um quadrado bege vazio; agora entrega a
+  // informacao que o mapa carregava.
+  function semMapa(el) {
+    el.innerHTML =
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:28px;">' +
+        '<span style="font-family:\'Space Mono\',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6a6154;">Mapa indisponível</span>' +
+        '<strong style="font-family:\'DM Serif Display\',serif;font-weight:400;font-size:23px;line-height:1.25;color:#0D0B08;">Rua Emboaçava, 422<br>Mooca — São Paulo</strong>' +
+        '<span style="font-size:15px;line-height:1.5;color:#4a453d;">Entregamos num raio de ~3 km, em cerca de 40 minutos.</span>' +
+      '</div>';
+  }
+
+  function carregarLeaflet(el) {
+    var css = document.createElement('link');
+    css.rel = 'stylesheet';
+    css.href = CSS_URL;
+    css.integrity = CSS_SRI;
+    css.crossOrigin = 'anonymous';
+    document.head.appendChild(css);
+
+    var js = document.createElement('script');
+    js.src = JS_URL;
+    js.integrity = JS_SRI;
+    js.crossOrigin = 'anonymous';
+    js.onload = init;
+    js.onerror = function () { semMapa(el); };
+    document.head.appendChild(js);
+  }
+
+  function agendar() {
+    var el = document.getElementById('mapa-entrega');
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { carregarLeaflet(el); return; }
+    // 500px de folga: o mapa termina de carregar antes de entrar em tela.
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      carregarLeaflet(el);
+    }, { rootMargin: '500px 0px' });
+    io.observe(el);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', agendar);
+  else agendar();
+})();
+
+/* pilares — entrada escalonada. So aplica se a linha ainda estiver abaixo da dobra,
+   para nunca "apagar" conteudo que ja esta visivel no carregamento. */
+(function () {
+  var pilares = document.querySelectorAll('.pilar');
+  if (!pilares.length || !('IntersectionObserver' in window)) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  var alvos = [];
+  pilares.forEach(function (el) {
+    if (el.getBoundingClientRect().top > window.innerHeight * 0.9) {
+      el.classList.add('js-reveal');
+      alvos.push(el);
+    }
+  });
+  if (!alvos.length) return;
+
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      var el = entry.target;
+      io.unobserve(el);
+      el.classList.add('is-in');
+      // devolve o elemento ao estado limpo para o hover voltar a ter sua propria transicao
+      setTimeout(function () { el.classList.remove('js-reveal', 'is-in'); }, 1500);
+    });
+  }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
+
+  alvos.forEach(function (el) { io.observe(el); });
 })();
 </script>
 </body>
