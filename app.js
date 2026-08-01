@@ -2,7 +2,7 @@
    Handles: inline logo injection (imagem logo.png, fundo transparente)
    + hover styles (the `style-hover` attribute). */
 
-const LOGO_SRC = 'logo.png';
+const LOGO_SRC = 'fotos/logo.png';
 
 /* O CSS ja reserva a caixa do `.logo` pelo data-size, entao a imagem so
    preenche o espaco que existe — nada de layout shift no cabecalho grudado.

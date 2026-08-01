@@ -11,7 +11,7 @@
      Figtree:500 saiu: zero usos na pagina. -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <!-- A foto do forno e o elemento LCP: pedida cedo e com prioridade. -->
-<link rel="preload" as="image" href="pizza-forno.jpg" fetchpriority="high">
+<link rel="preload" as="image" href="fotos/foto-principal.jpeg" fetchpriority="high">
 <!-- Leaflet (162 KB) saiu do <head>: bloqueava o render inteiro por um mapa
      que so aparece na quinta secao. Agora e carregado sob demanda, pelo
      script no fim do body, quando o mapa se aproxima da viewport. -->
@@ -209,10 +209,10 @@
     .pilar:hover .pilar-word { transform: none; }
   }
 
+
 </style>
 </head>
 <body>
-
 <div style="min-height:100%;">
 
   <!-- HEADER -->
@@ -269,7 +269,7 @@
       </div>
       <div class="hero-photo-wrap" style="position:relative;">
         <div class="zoom-photo" style="position:relative;z-index:1;aspect-ratio:3/4;border-radius:999px 999px 20px 20px;overflow:hidden;border:1px solid rgba(227,178,60,.35);box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 6px rgba(214,41,31,.06);">
-          <img src="pizza-forno.jpg" alt="Pizza artesanal saindo do forno a lenha da Pomodori" width="841" height="810" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
+          <img src="fotos/foto-principal.jpeg" alt="Pizzas da Pomodori assando no forno a lenha" width="1080" height="1120" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
           <!-- brilho de brasa no topo -->
           <div style="position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,rgba(227,178,60,.28),transparent 55%);mix-blend-mode:screen;pointer-events:none;"></div>
           <!-- gradiente escuro embaixo + vinheta -->
@@ -386,7 +386,7 @@
     <div class="rgrid" style="display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center;">
       <div class="sobre-photo-wrap">
         <div class="zoom-photo" style="position:relative;aspect-ratio:4/5;border-radius:20px 20px 999px 999px;overflow:hidden;border:1px solid rgba(227,178,60,.35);box-shadow:0 30px 60px rgba(0,0,0,.55),0 0 0 6px rgba(214,41,31,.06);">
-          <img src="lojaporfora.jpg" alt="Fachada da Pomodori Pizzaria na Mooca" width="847" height="635" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
+          <img src="fotos/lojaporfora.jpg" alt="Fachada da Pomodori Pizzaria na Mooca" width="847" height="635" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;filter:saturate(1.12) contrast(1.06) brightness(1.02);">
           <!-- brilho de brasa no topo -->
           <div style="position:absolute;inset:0;background:radial-gradient(120% 70% at 50% 0%,rgba(227,178,60,.28),transparent 55%);mix-blend-mode:screen;pointer-events:none;"></div>
           <!-- gradiente escuro embaixo + vinheta -->
@@ -433,7 +433,7 @@
         <div class="mapa-wrap">
           <div class="mapa" style="position:relative;aspect-ratio:1/1;border-radius:20px;overflow:hidden;border:1px solid rgba(27,74,63,.22);box-shadow:0 24px 50px rgba(13,11,8,.12);background:#f2ecde;">
             <div id="mapa-entrega" style="position:absolute;inset:0;z-index:1;"></div>
-            <img class="motoboy" src="motoboy.png" alt="Motoboy de entrega da Pomodori" width="514" height="361" loading="lazy" decoding="async" style="position:absolute;right:12px;bottom:12px;width:78px;height:auto;z-index:500;filter:drop-shadow(0 6px 10px rgba(13,11,8,.3));pointer-events:none;">
+            <img class="motoboy" src="fotos/motoboy.png" alt="Motoboy de entrega da Pomodori" width="514" height="361" loading="lazy" decoding="async" style="position:absolute;right:12px;bottom:12px;width:78px;height:auto;z-index:500;filter:drop-shadow(0 6px 10px rgba(13,11,8,.3));pointer-events:none;">
           </div>
           <div class="mapa-legend" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:16px;font-family:'Space Mono',monospace;font-size:12px;color:#8a7f6a;letter-spacing:.5px;">
             <span style="display:inline-flex;align-items:center;gap:7px;"><span style="width:14px;height:14px;border:2px dashed rgba(214,41,31,.5);border-radius:50%;display:inline-block;"></span>raio de 3 km · ≈ 40 min</span>
