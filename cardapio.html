@@ -384,5 +384,9 @@ document.getElementById('novidades').innerHTML = MENU.novidades.map(p => `
   </div>`).join('');
 </script>
 <script src="app.js"></script>
+
+<!-- Cloudflare Web Analytics — sem cookies, entao nao exige banner de consentimento.
+     O script e `type=module`, portanto ja e adiado por padrao e nao bloqueia o render. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7ec39b6f096c4d1da0219e6fb667c85f"}'></script>
 </body>
 </html>
