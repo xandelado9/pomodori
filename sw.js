@@ -2,7 +2,7 @@
    Deixa o cardápio abrir mesmo sem internet e o app carregar instantâneo.
    Ao mudar arquivos do app, suba o número da versão (CACHE) para forçar atualização. */
 
-const CACHE = "pomodori-app-v1";
+const CACHE = "pomodori-app-v2";
 
 // Casca do app (mesma origem). Ícones e fontes entram sob demanda.
 const CORE = [
@@ -18,9 +18,12 @@ const CORE = [
 ];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting())
-  );
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)));
+});
+
+// a página pede para a nova versão assumir na hora (botão "Atualizar")
+self.addEventListener("message", (e) => {
+  if (e.data === "skipWaiting") self.skipWaiting();
 });
 
 self.addEventListener("activate", (e) => {
