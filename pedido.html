@@ -57,10 +57,6 @@
   .intro h1{font-family:'Figtree',system-ui,sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-size:clamp(28px,7vw,40px);line-height:1.05;margin-bottom:8px;}
   .intro p{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 22px;}
 
-  .status-loja{border-radius:12px;padding:11px 16px;font-weight:700;font-size:14px;margin-bottom:16px;text-align:center;}
-  .status-loja.aberto{background:rgba(27,74,63,.35);color:#8fe7c8;border:1px solid rgba(27,74,63,.9);}
-  .status-loja.fechado{background:rgba(214,41,31,.15);color:#ff9b93;border:1px solid rgba(214,41,31,.5);}
-
   .card{background:rgba(251,248,241,.04);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;}
 
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:52px;
@@ -200,7 +196,6 @@
   </section>
 
   <main id="app-pedido" style="display:none;">
-    <div id="status-loja" class="status-loja" style="display:none;"></div>
     <div class="intro">
       <h1>Monte seu pedido</h1>
       <p>Escolha o tamanho, a massa e até 2 sabores. No final, o pedido vai pronto pro nosso WhatsApp — é só confirmar.</p>
@@ -601,50 +596,6 @@
     btn.style.display = (temUltimo && totalItens() === 0) ? "block" : "none";
   }
 
-  // ---------- horário de funcionamento (fuso de São Paulo) ----------
-  // minutos do dia: 18h=1080, 23h=1380, 23h30=1410
-  var HORARIO = { 2:[1080,1380], 3:[1080,1380], 4:[1080,1380], 5:[1080,1410], 6:[1080,1410] };
-  // 0=Dom e 1=Seg fechados
-  var DIAS_PT = ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"];
-
-  function agoraSP(){
-    var partes = new Intl.DateTimeFormat("en-US", {
-      timeZone: "America/Sao_Paulo", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false
-    }).formatToParts(new Date());
-    var o = {}; partes.forEach(function(p){ o[p.type] = p.value; });
-    var map = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 };
-    var h = parseInt(o.hour, 10); if (h === 24) h = 0;
-    return { dia: map[o.weekday], min: h * 60 + parseInt(o.minute, 10) };
-  }
-
-  function statusLoja(){
-    var t = agoraSP();
-    var hoje = HORARIO[t.dia];
-    if (hoje && t.min >= hoje[0] && t.min < hoje[1]){
-      return { aberto: true, msg: "🟢 Aberto agora · até " + (hoje[1] === 1410 ? "23h30" : "23h") };
-    }
-    if (hoje && t.min < hoje[0]){
-      return { aberto: false, msg: "🔴 Fechado agora · abrimos hoje às 18h" };
-    }
-    for (var i = 1; i <= 7; i++){
-      var d = (t.dia + i) % 7;
-      if (HORARIO[d]){
-        var quando = (i === 1) ? "amanhã" : DIAS_PT[d];
-        return { aberto: false, msg: "🔴 Fechado agora · abrimos " + quando + " às 18h" };
-      }
-    }
-    return { aberto: false, msg: "🔴 Fechado agora" };
-  }
-
-  function renderStatus(){
-    var el = $("status-loja");
-    if (!el) return;
-    var s = statusLoja();
-    el.className = "status-loja " + (s.aberto ? "aberto" : "fechado");
-    el.textContent = s.msg;
-    el.style.display = "block";
-  }
-
   $("lista-pedido").addEventListener("click", function(e){
     var t = e.target.closest("button"); if (!t) return;
     var i;
@@ -797,10 +748,6 @@
       (!c.nome ? $("c-nome") : $("c-endereco")).focus();
       return;
     }
-    // avisa se estiver fora do horário de funcionamento
-    if (!statusLoja().aberto){
-      if (!confirm("A pizzaria está fechada agora. Seu pedido só será preparado quando abrirmos (a partir das 18h). Deseja enviar mesmo assim?")) return;
-    }
     var url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(buildMessage());
     window.open(url, "_blank", "noopener");
 
@@ -880,8 +827,6 @@
     $("gate").style.display = "none";
     $("app-pedido").style.display = "block";
     renderPedido();
-    renderStatus();
-    setInterval(renderStatus, 60000);
   }
   function mostrarGate(){
     $("app-pedido").style.display = "none";
