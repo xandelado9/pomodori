@@ -723,6 +723,16 @@
     }
     var url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(buildMessage());
     window.open(url, "_blank", "noopener");
+
+    // pedido enviado: esvazia o carrinho automaticamente.
+    // mantém os dados de entrega (nome/endereço/pagamento) para o próximo pedido.
+    state.pizzas = [];
+    state.bebidas = {};
+    save();
+    renderPedido();
+    renderCheckoutItens();
+    closeSheet("sheet-checkout");
+    showToast("Pedido enviado! 🍕");
   });
 
   $("btn-limpar").addEventListener("click", function(){
