@@ -783,10 +783,31 @@
     $("gate").style.display = "flex";
     configurarGate();
   }
+  // tenta reabrir esta página no Chrome (só Android; sai do navegador do Instagram)
+  function tentarChrome(){
+    var alvo = location.host + location.pathname + location.search;
+    var intent = "intent://" + alvo +
+      "#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=" +
+      encodeURIComponent(location.href) + ";end";
+    try { window.location.href = intent; } catch (e) {}
+  }
+
   function configurarGate(){
-    if (ehInApp()){
+    if (ehInApp() && !ehIOS()){
+      // Android dentro do Instagram/Facebook: mandar pro Chrome
+      btnInstalar.textContent = "🌐 Abrir no Chrome";
+      btnInstalar.style.display = "block";
+      gateNote.innerHTML = "Para instalar, o app precisa abrir no Chrome. Toque no botão acima. Se não abrir, toque em <b>⋮</b> e <b>“Abrir no Chrome”</b>.";
+      try {
+        if (!sessionStorage.getItem("tentou_chrome")){
+          sessionStorage.setItem("tentou_chrome", "1");
+          setTimeout(tentarChrome, 500);
+        }
+      } catch (e) {}
+    } else if (ehInApp() && ehIOS()){
+      // iPhone dentro do Instagram/Facebook: só instrução (Apple bloqueia forçar)
       btnInstalar.style.display = "none";
-      gateNote.innerHTML = "Você abriu por dentro do Instagram/Facebook. Toque no menu <b>⋯</b> e escolha <b>“Abrir no navegador”</b> (Chrome ou Safari) para instalar o app.";
+      gateNote.innerHTML = "Você abriu por dentro do Instagram/Facebook. Toque em <b>⋯</b> (canto da tela) e escolha <b>“Abrir no navegador”</b> para instalar o app.";
     } else if (ehIOS()){
       btnInstalar.textContent = "📲 Como instalar no iPhone";
       btnInstalar.style.display = "block";
@@ -813,14 +834,14 @@
   });
 
   btnInstalar.addEventListener("click", function(){
+    if (ehInApp() && !ehIOS()){ tentarChrome(); return; }
     if (deferredPrompt){
       deferredPrompt.prompt();
       deferredPrompt.userChoice.then(function(){ deferredPrompt = null; });
-    } else if (ehIOS()){
-      openSheet("sheet-ios");
-    } else {
-      gateNote.innerHTML = "Se a instalação não abriu, toque no menu do navegador (⋮) e escolha <b>“Instalar app”</b>. Se já instalou, abra pela <b>Pomodori</b> na tela inicial.";
+      return;
     }
+    if (ehIOS()){ openSheet("sheet-ios"); return; }
+    gateNote.innerHTML = "Se a instalação não abriu, toque no menu do navegador (⋮) e escolha <b>“Instalar app”</b>. Se já instalou, abra pela <b>Pomodori</b> na tela inicial.";
   });
 
   // decide o que aparece
