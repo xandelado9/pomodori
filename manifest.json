@@ -1,0 +1,17 @@
+{
+  "name": "Pomodori Pizzaria — Pedido",
+  "short_name": "Pomodori",
+  "description": "Monte sua pizza da Pomodori e envie o pedido pelo WhatsApp. Delivery na Mooca.",
+  "lang": "pt-BR",
+  "start_url": "pedido.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0D0B08",
+  "theme_color": "#0D0B08",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

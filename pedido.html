@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fazer pedido — Pomodori Pizzaria</title>
+<meta name="description" content="Monte sua pizza da Pomodori — escolha tamanho, massa e até 3 sabores — e envie o pedido direto no WhatsApp.">
+<meta name="theme-color" content="#0D0B08">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Figtree:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D0B08; --cream:#FBF8F1; --gold:#E3B23C; --red:#D6291F; --green:#1B4A3F;
+    --line:rgba(227,178,60,.22); --muted:rgba(251,248,241,.62);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:'Figtree',system-ui,sans-serif;background:var(--bg);color:var(--cream);-webkit-font-smoothing:antialiased;}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  input,textarea,select{font-family:inherit;}
+  h1,h2,h3{margin:0;}
+  .mono{font-family:'Space Mono',monospace;}
+  .serif{font-family:'DM Serif Display',serif;}
+
+  a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
+    outline:3px solid var(--gold);outline-offset:2px;border-radius:8px;
+  }
+
+  /* ---------- header ---------- */
+  header{position:sticky;top:0;z-index:40;background:rgba(13,11,8,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);}
+  .hdr-inner{max-width:720px;margin:0 auto;display:flex;align-items:center;gap:14px;
+    padding:10px max(16px,env(safe-area-inset-left)) 10px max(16px,env(safe-area-inset-right));}
+  .hdr-logo .logo{width:46px;height:46px;}
+  .hdr-logo img{height:46px !important;width:46px !important;}
+  .hdr-title{font-weight:800;font-size:16px;letter-spacing:.3px;margin-right:auto;}
+  .hdr-title small{display:block;font-weight:400;font-size:11px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+
+  main{max-width:720px;margin:0 auto;padding:22px 16px 150px;}
+
+  .intro h1{font-family:'Figtree',system-ui,sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-size:clamp(28px,7vw,40px);line-height:1.05;margin-bottom:8px;}
+  .intro p{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 22px;}
+
+  .card{background:rgba(251,248,241,.04);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px;}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:52px;
+    padding:14px 22px;border-radius:14px;font-weight:800;font-size:16px;width:100%;transition:background .15s,color .15s,border-color .15s;}
+  .btn-gold{background:var(--gold);color:var(--bg);}
+  .btn-gold:hover{background:var(--cream);}
+  .btn-red{background:var(--red);color:var(--cream);}
+  .btn-red:hover{background:var(--gold);color:var(--bg);}
+  .btn-ghost{background:transparent;border:2px solid var(--line);color:var(--cream);}
+  .btn-ghost:hover{border-color:var(--gold);}
+  .btn-doce{background:transparent;border:2px solid var(--gold);color:var(--gold);}
+  .btn-doce:hover{background:var(--gold);color:var(--bg);}
+  .btn-instalar{background:var(--green);color:var(--cream);margin-bottom:14px;}
+  .btn-instalar:hover{background:#22624f;}
+  /* passo a passo do iPhone */
+  .passo{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid rgba(251,248,241,.1);}
+  .passo:last-child{border-bottom:none;}
+  .passo-num{flex:none;width:30px;height:30px;border-radius:999px;background:var(--gold);color:var(--bg);font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .passo-txt{font-size:15px;line-height:1.5;}
+  .ios-icon{display:inline-flex;vertical-align:-5px;}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+  .montar-botoes{display:flex;flex-direction:column;gap:10px;}
+
+  .empty{text-align:center;color:var(--muted);padding:26px 8px;font-size:15px;line-height:1.5;}
+
+  /* ---------- lista de pizzas no pedido ---------- */
+  .item{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid rgba(251,248,241,.1);}
+  .item:last-child{border-bottom:none;}
+  .item-body{flex:1;min-width:0;}
+  .item-title{font-weight:800;font-size:16px;}
+  .item-sub{font-size:14px;color:var(--muted);line-height:1.45;margin-top:3px;}
+  .item-tag{font-size:12px;color:var(--gold);margin-top:5px;}
+  .item-actions{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+  .link{color:var(--gold);font-size:13px;font-weight:700;text-decoration:underline;background:none;padding:4px;}
+  .link.del{color:#ff8b82;}
+
+  /* stepper de quantidade */
+  .stepper{display:inline-flex;align-items:center;gap:0;border:1px solid var(--line);border-radius:999px;overflow:hidden;}
+  .stepper button{width:38px;height:38px;font-size:20px;font-weight:700;color:var(--gold);display:flex;align-items:center;justify-content:center;}
+  .stepper button:hover{background:rgba(227,178,60,.14);}
+  .stepper span{min-width:30px;text-align:center;font-weight:800;font-size:16px;}
+
+  /* ---------- barra fixa "ver pedido" ---------- */
+  .bar{position:fixed;left:0;right:0;bottom:0;z-index:45;background:linear-gradient(to top,var(--bg) 68%,transparent);
+    padding:14px 16px max(16px,env(safe-area-inset-bottom));transform:translateY(120%);transition:transform .25s ease;}
+  .bar.show{transform:translateY(0);}
+  .bar-inner{max-width:720px;margin:0 auto;}
+  .bar .btn{box-shadow:0 10px 30px rgba(0,0,0,.5);}
+  .badge{background:var(--bg);color:var(--gold);border-radius:999px;font-size:14px;font-weight:800;padding:2px 10px;margin-left:2px;}
+
+  /* ---------- modal / folha ---------- */
+  .sheet{position:fixed;inset:0;z-index:60;display:none;}
+  .sheet.open{display:block;}
+  .sheet-back{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);}
+  .sheet-panel{position:absolute;left:0;right:0;bottom:0;max-height:92vh;display:flex;flex-direction:column;
+    background:var(--bg);border-top-left-radius:22px;border-top-right-radius:22px;border-top:1px solid var(--line);
+    max-width:720px;margin:0 auto;}
+  .sheet-head{display:flex;align-items:center;gap:12px;padding:16px 18px 12px;border-bottom:1px solid var(--line);}
+  .sheet-head h2{font-size:19px;font-weight:800;margin-right:auto;}
+  .sheet-close{width:40px;height:40px;border-radius:999px;background:rgba(251,248,241,.08);font-size:22px;display:flex;align-items:center;justify-content:center;}
+  .sheet-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px;}
+  .sheet-foot{padding:14px 18px max(16px,env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg);}
+
+  .label{display:block;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin:20px 0 10px;}
+  .label:first-child{margin-top:0;}
+  .hint{font-size:12px;color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;}
+
+  /* chips de escolha (segmented / opções) */
+  .chips{display:flex;flex-wrap:wrap;gap:9px;}
+  .chip{padding:11px 16px;border-radius:12px;border:1.5px solid var(--line);font-weight:700;font-size:15px;min-height:44px;display:inline-flex;align-items:center;background:rgba(251,248,241,.03);}
+  .chip:hover{border-color:var(--gold);}
+  .chip.on{background:var(--gold);color:var(--bg);border-color:var(--gold);}
+
+  /* busca + lista de sabores */
+  .search{width:100%;background:rgba(251,248,241,.06);border:1.5px solid var(--line);border-radius:12px;
+    color:var(--cream);font-size:16px;padding:13px 14px;min-height:48px;}
+  .search::placeholder{color:rgba(251,248,241,.4);}
+  .flavors{margin-top:10px;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+  .flavor{display:flex;gap:12px;align-items:flex-start;padding:13px 14px;border-bottom:1px solid rgba(251,248,241,.08);width:100%;text-align:left;}
+  .flavor:last-child{border-bottom:none;}
+  .flavor:hover{background:rgba(227,178,60,.06);}
+  .flavor.on{background:rgba(227,178,60,.12);}
+  .flavor.dim{opacity:.4;}
+  .flavor.promo{box-shadow:inset 3px 0 0 var(--gold);}
+  .flavor-promo{display:inline-block;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;letter-spacing:.5px;
+    color:#0D0B08;background:#FFD23F;border-radius:5px;padding:1px 7px;margin-bottom:5px;}
+  .flavor-check{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);flex:none;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--bg);}
+  .flavor.on .flavor-check{background:var(--gold);border-color:var(--gold);}
+  .flavor-n{font-family:'Space Mono',monospace;font-size:12px;color:var(--red);font-weight:700;}
+  .flavor-nome{display:block;font-weight:700;font-size:15px;}
+  .flavor-ing{display:block;font-size:13px;color:var(--muted);line-height:1.4;margin-top:2px;}
+  .cat-head{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);padding:12px 14px 4px;background:rgba(251,248,241,.03);}
+
+  .field{width:100%;background:rgba(251,248,241,.06);border:1.5px solid var(--line);border-radius:12px;
+    color:var(--cream);font-size:16px;padding:13px 14px;min-height:48px;margin-top:8px;}
+  .field:focus{border-color:var(--gold);outline:none;}
+  textarea.field{min-height:74px;resize:vertical;line-height:1.4;}
+  .row2{display:flex;gap:10px;}
+  .row2 > *{flex:1;}
+
+  .selected-note{font-size:13px;color:var(--gold);margin-top:8px;min-height:18px;}
+  .disclaimer{font-size:12px;color:var(--muted);text-align:center;line-height:1.5;margin-top:14px;}
+
+  .toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);z-index:80;
+    background:var(--green);color:var(--cream);font-weight:700;font-size:14px;padding:12px 20px;border-radius:999px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="hdr-inner">
+      <a class="hdr-logo" href="index.html" aria-label="Página inicial da Pomodori" style="display:flex;align-items:center;">
+        <span class="logo" data-size="7.2"></span>
+      </a>
+      <div class="hdr-title">Fazer pedido<small>Pizzaria Pomodori · Mooca</small></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <h1>Monte seu pedido</h1>
+      <p>Escolha o tamanho, a massa e até 2 sabores. No final, o pedido vai pronto pro nosso WhatsApp — é só confirmar.</p>
+    </div>
+
+    <button class="btn btn-instalar" id="btn-instalar" style="display:none;">📲 Instalar o app no celular</button>
+
+    <div class="montar-botoes">
+      <button class="btn btn-gold" id="btn-montar-salgada">🍕 Montar pizza salgada</button>
+      <button class="btn btn-doce" id="btn-montar-doce">🍫 Montar pizza doce</button>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <h2 style="font-size:18px;font-weight:800;">Seu pedido</h2>
+        <span class="mono" id="resumo-count" style="font-size:12px;color:var(--muted);"></span>
+      </div>
+      <div id="lista-pedido"></div>
+    </div>
+
+    <button class="btn btn-ghost" id="btn-bebidas">+ Adicionar bebidas</button>
+
+    <p class="disclaimer">Apenas delivery na Mooca e região. Este app monta o pedido e envia pelo WhatsApp — a pizzaria confirma o valor e o tempo de entrega por lá.</p>
+  </main>
+
+  <!-- barra fixa -->
+  <div class="bar" id="bar">
+    <div class="bar-inner">
+      <button class="btn btn-red" id="btn-ver-pedido">Ver pedido e enviar <span class="badge" id="bar-count">0</span></button>
+    </div>
+  </div>
+
+  <!-- ============ FOLHA: MONTAR PIZZA ============ -->
+  <div class="sheet" id="sheet-pizza" aria-hidden="true" role="dialog" aria-label="Montar pizza">
+    <div class="sheet-back" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <h2 id="pizza-head">Montar pizza</h2>
+        <button class="sheet-close" data-close aria-label="Fechar">×</button>
+      </div>
+      <div class="sheet-body">
+        <span class="label">Tamanho</span>
+        <div class="chips" id="opt-tamanho"></div>
+
+        <span class="label">Massa</span>
+        <div class="chips" id="opt-massa"></div>
+
+        <span class="label">Sabores <span class="hint" id="sabor-hint"></span></span>
+        <input class="search" id="busca-sabor" type="search" placeholder="Buscar sabor (ex.: calabresa, mussarela...)" autocomplete="off">
+        <div class="selected-note" id="sabor-nota"></div>
+        <div class="flavors" id="lista-sabores"></div>
+
+        <div id="bloco-borda">
+          <span class="label">Borda recheada <span class="hint">opcional</span></span>
+          <div class="chips" id="opt-borda"></div>
+        </div>
+
+        <span class="label">Observações <span class="hint">opcional</span></span>
+        <textarea class="field" id="pizza-obs" placeholder="Ex.: sem cebola, bem assada, cortar em 8 pedaços..."></textarea>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn btn-gold" id="btn-add-pizza" disabled>Adicionar ao pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOLHA: BEBIDAS ============ -->
+  <div class="sheet" id="sheet-bebidas" aria-hidden="true" role="dialog" aria-label="Bebidas">
+    <div class="sheet-back" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <h2>Bebidas</h2>
+        <button class="sheet-close" data-close aria-label="Fechar">×</button>
+      </div>
+      <div class="sheet-body" id="lista-bebidas"></div>
+      <div class="sheet-foot">
+        <button class="btn btn-gold" data-close>Pronto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOLHA: PEDIDO / ENVIO ============ -->
+  <div class="sheet" id="sheet-checkout" aria-hidden="true" role="dialog" aria-label="Seu pedido">
+    <div class="sheet-back" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <h2>Seu pedido</h2>
+        <button class="sheet-close" data-close aria-label="Fechar">×</button>
+      </div>
+      <div class="sheet-body">
+        <div id="checkout-itens"></div>
+
+        <span class="label">Dados para entrega</span>
+        <input class="field" id="c-nome" type="text" placeholder="Seu nome" autocomplete="name">
+        <div class="row2">
+          <input class="field" id="c-endereco" type="text" placeholder="Rua e número" autocomplete="street-address" style="flex:2;">
+        </div>
+        <div class="row2">
+          <input class="field" id="c-bairro" type="text" placeholder="Bairro" autocomplete="address-level3">
+          <input class="field" id="c-complemento" type="text" placeholder="Apto / referência">
+        </div>
+
+        <span class="label">Pagamento</span>
+        <div class="chips" id="opt-pagto"></div>
+        <input class="field" id="c-troco" type="text" placeholder="Troco para quanto? (opcional)" inputmode="numeric" style="display:none;">
+
+        <span class="label">Observações do pedido <span class="hint">opcional</span></span>
+        <textarea class="field" id="c-obs" placeholder="Ex.: interfone quebrado, ligar ao chegar..."></textarea>
+
+        <p class="disclaimer">Ao enviar, abrimos o WhatsApp da pizzaria com seu pedido já escrito. O valor total é confirmado pela pizzaria na conversa.</p>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn btn-red" id="btn-enviar">Enviar pedido no WhatsApp</button>
+        <button class="link del" id="btn-limpar" style="display:block;margin:12px auto 0;">Limpar pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ FOLHA: COMO INSTALAR NO IPHONE ============ -->
+  <div class="sheet" id="sheet-ios" aria-hidden="true" role="dialog" aria-label="Como instalar no iPhone">
+    <div class="sheet-back" data-close></div>
+    <div class="sheet-panel">
+      <div class="sheet-head">
+        <h2>Instalar no iPhone</h2>
+        <button class="sheet-close" data-close aria-label="Fechar">×</button>
+      </div>
+      <div class="sheet-body">
+        <p style="color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 12px;">No iPhone, o atalho se cria pelo próprio Safari. É rapidinho:</p>
+        <div class="passo">
+          <span class="passo-num">1</span>
+          <span class="passo-txt">Toque no botão <b>Compartilhar</b>
+            <svg class="ios-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E3B23C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+            na barra do Safari (embaixo).</span>
+        </div>
+        <div class="passo">
+          <span class="passo-num">2</span>
+          <span class="passo-txt">Role e toque em <b>“Adicionar à Tela de Início”</b>.</span>
+        </div>
+        <div class="passo">
+          <span class="passo-num">3</span>
+          <span class="passo-txt">Toque em <b>“Adicionar”</b> no canto. Pronto — o ícone da Pomodori aparece na tela do celular. 🍕</span>
+        </div>
+      </div>
+      <div class="sheet-foot">
+        <button class="btn btn-gold" data-close>Entendi</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script src="menu.js"></script>
+<script src="app.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  var esc = function(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); };
+  var norm = function(s){ return String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase(); };
+  var $ = function(id){ return document.getElementById(id); };
+
+  // sabores salgados (tradicionais + novidades) e doces, em listas separadas
+  var FLAVORS_SALGADA = [];
+  [{ key:"tradicionais", nome:"Tradicionais" }, { key:"novidades", nome:"Novidades" }].forEach(function(cat){
+    (MENU[cat.key]||[]).forEach(function(p){
+      FLAVORS_SALGADA.push({ nome:p.nome, ing:p.ing, n:p.n||"", cat:cat.nome });
+    });
+  });
+  var FLAVORS_DOCE = (MENU.doces||[])
+    .filter(function(p){ return p.nome !== "Uva com Chocolate"; })
+    .map(function(p){ return { nome:p.nome, ing:p.ing, n:p.n||"", cat:"Doces" }; });
+
+  function flavorsFor(tipo){ return tipo === "doce" ? FLAVORS_DOCE : FLAVORS_SALGADA; }
+  function maxSaboresFor(tipo){ return tipo === "doce" ? 1 : OPCOES.maxSabores; }
+
+  // sabores em promoção (valor fixo) — para o selo na lista
+  var PROMO = OPCOES.promo || { preco:"", sabores:[] };
+  var promoSet = {};
+  (PROMO.sabores || []).forEach(function(n){ promoSet[n] = true; });
+
+  // ---------- estado ----------
+  var STORE_KEY = "pomodori_pedido_v1";
+  var state = { pizzas:[], bebidas:{}, cliente:{} };
+  try {
+    var saved = JSON.parse(localStorage.getItem(STORE_KEY));
+    if (saved && typeof saved === "object") state = Object.assign(state, saved);
+  } catch(e){}
+  function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){} }
+
+  // rascunho da pizza em construção
+  var draft = null;        // {tamanho, massa, sabores:[], borda, obs}
+  var editIndex = -1;      // -1 = nova pizza; >=0 = editando
+
+  // ---------- descrição de uma pizza ----------
+  var FRAC = {1:["Inteira"], 2:["½","½"], 3:["⅓","⅓","⅓"]};
+  function descSabores(sabores){
+    var frac = FRAC[sabores.length] || [];
+    if (sabores.length === 1) return sabores[0];
+    return sabores.map(function(s,i){ return (frac[i]||"") + " " + s; }).join(" / ");
+  }
+  function pizzaLinhaCurta(pz){
+    return pz.tamanho + " · massa " + pz.massa;
+  }
+
+  // ========================================================
+  //  FOLHA MONTAR PIZZA
+  // ========================================================
+  function abrirMontar(tipo, index){
+    editIndex = (typeof index === "number") ? index : -1;
+    if (editIndex >= 0){
+      var p = state.pizzas[editIndex];
+      tipo = p.tipo || "salgada";
+      draft = { tipo:tipo, tamanho:p.tamanho, massa:p.massa, sabores:p.sabores.slice(), borda:p.borda||null, obs:p.obs||"" };
+      $("pizza-head").textContent = "Editar pizza" + (tipo === "doce" ? " doce" : "");
+      $("btn-add-pizza").textContent = "Salvar alterações";
+    } else {
+      draft = { tipo:tipo, tamanho:(OPCOES.tamanhoPadrao || OPCOES.tamanhos[0]), massa:(OPCOES.massaPadrao || OPCOES.massas[0]), sabores:[], borda:null, obs:"" };
+      $("pizza-head").textContent = tipo === "doce" ? "Montar pizza doce" : "Montar pizza salgada";
+      $("btn-add-pizza").textContent = "Adicionar ao pedido";
+    }
+    // pizza doce não tem borda
+    $("bloco-borda").style.display = (draft.tipo === "doce") ? "none" : "block";
+    $("busca-sabor").value = "";
+    $("pizza-obs").value = draft.obs;
+    renderChips("opt-tamanho", OPCOES.tamanhos, draft.tamanho, function(v){ draft.tamanho = v; });
+    renderChips("opt-massa", OPCOES.massas, draft.massa, function(v){ draft.massa = v; });
+    if (draft.tipo !== "doce") renderBordas();
+    renderSabores();
+    updateSaborUI();
+    openSheet("sheet-pizza");
+  }
+
+  function renderChips(containerId, opcoes, selecionado, onPick){
+    var c = $(containerId);
+    c.innerHTML = "";
+    opcoes.forEach(function(op){
+      var b = document.createElement("button");
+      b.className = "chip" + (op === selecionado ? " on" : "");
+      b.textContent = op;
+      b.onclick = function(){
+        onPick(op);
+        Array.prototype.forEach.call(c.children, function(ch){ ch.classList.remove("on"); });
+        b.classList.add("on");
+      };
+      c.appendChild(b);
+    });
+  }
+
+  function renderBordas(){
+    var c = $("opt-borda");
+    c.innerHTML = "";
+    var opts = ["Sem borda"].concat(OPCOES.bordas);
+    opts.forEach(function(op){
+      var isNone = (op === "Sem borda");
+      var sel = isNone ? (draft.borda == null) : (draft.borda === op);
+      var b = document.createElement("button");
+      b.className = "chip" + (sel ? " on" : "");
+      b.textContent = op;
+      b.onclick = function(){
+        draft.borda = isNone ? null : op;
+        Array.prototype.forEach.call(c.children, function(ch){ ch.classList.remove("on"); });
+        b.classList.add("on");
+      };
+      c.appendChild(b);
+    });
+  }
+
+  function renderSabores(){
+    var termo = norm($("busca-sabor").value);
+    var host = $("lista-sabores");
+    host.innerHTML = "";
+    var max = maxSaboresFor(draft.tipo);
+    var atingiuMax = draft.sabores.length >= max;
+
+    var currentCat = "";
+    flavorsFor(draft.tipo).forEach(function(f){
+      if (termo && norm(f.nome + " " + f.ing).indexOf(termo) === -1) return;
+      if (f.cat !== currentCat){
+        currentCat = f.cat;
+        var h = document.createElement("div");
+        h.className = "cat-head";
+        h.textContent = f.cat;
+        host.appendChild(h);
+      }
+      var on = draft.sabores.indexOf(f.nome) !== -1;
+      var dim = !on && atingiuMax;
+      var isPromo = !!promoSet[f.nome];
+      var b = document.createElement("button");
+      b.className = "flavor" + (on ? " on" : "") + (dim ? " dim" : "") + (isPromo ? " promo" : "");
+      b.innerHTML =
+        '<span class="flavor-check">' + (on ? "✓" : "") + '</span>' +
+        '<span style="flex:1;min-width:0;">' +
+          (isPromo ? '<span class="flavor-promo">🍌 Promo ' + esc(PROMO.preco) + '</span><br>' : '') +
+          '<span class="flavor-nome">' + (f.n ? '<span class="flavor-n">' + esc(f.n) + '</span> ' : '') + esc(f.nome) + '</span>' +
+          '<span class="flavor-ing">' + esc(f.ing) + '</span>' +
+        '</span>';
+      b.onclick = function(){ toggleSabor(f.nome); };
+      host.appendChild(b);
+    });
+    if (!host.children.length){
+      host.innerHTML = '<div class="empty">Nenhum sabor encontrado.</div>';
+    }
+  }
+
+  function toggleSabor(nome){
+    var max = maxSaboresFor(draft.tipo);
+    var i = draft.sabores.indexOf(nome);
+    if (i !== -1){ draft.sabores.splice(i,1); }
+    else {
+      if (draft.sabores.length >= max){
+        // no modo doce (1 sabor) trocar direto em vez de bloquear
+        if (max === 1){ draft.sabores = [nome]; }
+        else { showToast("Máximo de " + max + " sabores por pizza"); return; }
+      } else {
+        draft.sabores.push(nome);
+      }
+    }
+    renderSabores();
+    updateSaborUI();
+  }
+
+  function updateSaborUI(){
+    var max = maxSaboresFor(draft.tipo);
+    var rotulo = max === 1 ? "(1 sabor)" : "(até " + max + " — " + draft.sabores.length + " escolhido" + (draft.sabores.length===1?"":"s") + ")";
+    $("sabor-hint").textContent = rotulo;
+    $("sabor-nota").textContent = draft.sabores.length ? descSabores(draft.sabores) : "";
+    $("btn-add-pizza").disabled = draft.sabores.length === 0;
+  }
+
+  $("busca-sabor").addEventListener("input", renderSabores);
+  $("pizza-obs").addEventListener("input", function(){ draft.obs = this.value; });
+
+  $("btn-add-pizza").addEventListener("click", function(){
+    if (!draft.sabores.length) return;
+    var pizza = {
+      tipo:draft.tipo, tamanho:draft.tamanho, massa:draft.massa,
+      sabores:draft.sabores.slice(), borda:(draft.tipo === "doce" ? null : draft.borda),
+      obs:draft.obs.trim(), qtd:1
+    };
+    if (editIndex >= 0){
+      pizza.qtd = state.pizzas[editIndex].qtd || 1;
+      state.pizzas[editIndex] = pizza;
+    } else {
+      state.pizzas.push(pizza);
+    }
+    save();
+    closeSheet("sheet-pizza");
+    renderPedido();
+    showToast(editIndex >= 0 ? "Pizza atualizada" : "Pizza adicionada");
+  });
+
+  // ========================================================
+  //  LISTA DE PIZZAS NA TELA
+  // ========================================================
+  function renderPedido(){
+    var host = $("lista-pedido");
+    host.innerHTML = "";
+    if (!state.pizzas.length){
+      host.innerHTML = '<div class="empty">Nenhuma pizza ainda.<br>Toque em <b>“Montar pizza salgada”</b> ou <b>“doce”</b> para começar.</div>';
+    } else {
+      state.pizzas.forEach(function(pz, idx){
+        var row = document.createElement("div");
+        row.className = "item";
+        row.innerHTML =
+          '<div class="item-body">' +
+            '<div class="item-title">' + esc(descSabores(pz.sabores)) + (pz.tipo === "doce" ? ' <span style="color:var(--gold);font-size:12px;">🍫 doce</span>' : '') + '</div>' +
+            '<div class="item-sub">' + esc(pizzaLinhaCurta(pz)) + '</div>' +
+            (pz.borda ? '<div class="item-tag">Borda: ' + esc(pz.borda) + '</div>' : '') +
+            (pz.obs ? '<div class="item-tag">Obs: ' + esc(pz.obs) + '</div>' : '') +
+            '<div style="margin-top:8px;"><button class="link" data-edit="' + idx + '">Editar</button></div>' +
+          '</div>' +
+          '<div class="item-actions">' +
+            '<div class="stepper">' +
+              '<button data-dec="' + idx + '" aria-label="Menos um">−</button>' +
+              '<span>' + (pz.qtd||1) + '</span>' +
+              '<button data-inc="' + idx + '" aria-label="Mais um">+</button>' +
+            '</div>' +
+            '<button class="link del" data-del="' + idx + '">Remover</button>' +
+          '</div>';
+        host.appendChild(row);
+      });
+    }
+    updateResumo();
+    updateBar();
+  }
+
+  $("lista-pedido").addEventListener("click", function(e){
+    var t = e.target.closest("button"); if (!t) return;
+    var i;
+    if ((i = t.getAttribute("data-inc")) !== null){ state.pizzas[+i].qtd = (state.pizzas[+i].qtd||1) + 1; save(); renderPedido(); }
+    else if ((i = t.getAttribute("data-dec")) !== null){ var p = state.pizzas[+i]; p.qtd = (p.qtd||1) - 1; if (p.qtd < 1) state.pizzas.splice(+i,1); save(); renderPedido(); }
+    else if ((i = t.getAttribute("data-del")) !== null){ state.pizzas.splice(+i,1); save(); renderPedido(); }
+    else if ((i = t.getAttribute("data-edit")) !== null){ abrirMontar(null, +i); }
+  });
+
+  function totalPizzas(){ return state.pizzas.reduce(function(s,p){ return s + (p.qtd||1); }, 0); }
+  function totalBebidas(){ return Object.keys(state.bebidas).reduce(function(s,k){ return s + state.bebidas[k]; }, 0); }
+  function totalItens(){ return totalPizzas() + totalBebidas(); }
+
+  function updateResumo(){
+    var np = totalPizzas(), nb = totalBebidas(), parts = [];
+    if (np) parts.push(np + (np===1?" pizza":" pizzas"));
+    if (nb) parts.push(nb + (nb===1?" bebida":" bebidas"));
+    $("resumo-count").textContent = parts.join(" · ");
+  }
+
+  function updateBar(){
+    var n = totalItens();
+    $("bar-count").textContent = n;
+    $("bar").classList.toggle("show", n > 0);
+  }
+
+  // ========================================================
+  //  BEBIDAS
+  // ========================================================
+  function renderBebidas(){
+    var host = $("lista-bebidas");
+    host.innerHTML = "";
+    OPCOES.bebidas.forEach(function(nome){
+      var qtd = state.bebidas[nome] || 0;
+      var row = document.createElement("div");
+      row.className = "item";
+      row.innerHTML =
+        '<div class="item-body" style="display:flex;align-items:center;">' +
+          '<div class="item-title" style="font-size:15px;">' + esc(nome) + '</div>' +
+        '</div>' +
+        '<div class="stepper">' +
+          '<button data-bdec="' + esc(nome) + '" aria-label="Menos um">−</button>' +
+          '<span>' + qtd + '</span>' +
+          '<button data-binc="' + esc(nome) + '" aria-label="Mais um">+</button>' +
+        '</div>';
+      host.appendChild(row);
+    });
+  }
+  $("lista-bebidas").addEventListener("click", function(e){
+    var t = e.target.closest("button"); if (!t) return;
+    var nome;
+    if ((nome = t.getAttribute("data-binc"))){ state.bebidas[nome] = (state.bebidas[nome]||0) + 1; }
+    else if ((nome = t.getAttribute("data-bdec"))){ state.bebidas[nome] = (state.bebidas[nome]||0) - 1; if (state.bebidas[nome] <= 0) delete state.bebidas[nome]; }
+    else return;
+    save(); renderBebidas(); updateResumo(); updateBar();
+  });
+
+  // ========================================================
+  //  CHECKOUT
+  // ========================================================
+  var PAGTOS = ["Dinheiro","Cartão","Pix"];
+  function abrirCheckout(){
+    renderCheckoutItens();
+    $("c-nome").value = state.cliente.nome || "";
+    $("c-endereco").value = state.cliente.endereco || "";
+    $("c-bairro").value = state.cliente.bairro || "";
+    $("c-complemento").value = state.cliente.complemento || "";
+    $("c-obs").value = state.cliente.obs || "";
+    $("c-troco").value = state.cliente.troco || "";
+    renderChips("opt-pagto", PAGTOS, state.cliente.pagamento || "", function(v){
+      state.cliente.pagamento = v; save();
+      $("c-troco").style.display = (v === "Dinheiro") ? "block" : "none";
+    });
+    $("c-troco").style.display = (state.cliente.pagamento === "Dinheiro") ? "block" : "none";
+    openSheet("sheet-checkout");
+  }
+  function renderCheckoutItens(){
+    var host = $("checkout-itens");
+    if (!totalItens()){
+      host.innerHTML = '<div class="empty">Seu pedido está vazio.</div>';
+      $("btn-enviar").disabled = true;
+      return;
+    }
+    $("btn-enviar").disabled = false;
+    var html = "";
+    state.pizzas.forEach(function(pz){
+      html += '<div class="item"><div class="item-body">' +
+        '<div class="item-title">' + (pz.qtd>1?pz.qtd+"x ":"") + esc(descSabores(pz.sabores)) + (pz.tipo === "doce" ? ' 🍫' : '') + '</div>' +
+        '<div class="item-sub">' + esc(pizzaLinhaCurta(pz)) + (pz.borda?" · borda "+esc(pz.borda):"") + '</div>' +
+        (pz.obs?'<div class="item-tag">Obs: '+esc(pz.obs)+'</div>':'') +
+      '</div></div>';
+    });
+    Object.keys(state.bebidas).forEach(function(k){
+      html += '<div class="item"><div class="item-body">' +
+        '<div class="item-title" style="font-size:15px;">' + state.bebidas[k] + 'x ' + esc(k) + '</div>' +
+      '</div></div>';
+    });
+    host.innerHTML = html;
+  }
+
+  ["c-nome","c-endereco","c-bairro","c-complemento","c-obs","c-troco"].forEach(function(id){
+    var map = {"c-nome":"nome","c-endereco":"endereco","c-bairro":"bairro","c-complemento":"complemento","c-obs":"obs","c-troco":"troco"};
+    $(id).addEventListener("input", function(){ state.cliente[map[id]] = this.value; save(); });
+  });
+
+  // ---------- monta a mensagem do WhatsApp ----------
+  function buildMessage(){
+    var L = [];
+    L.push("*PEDIDO — POMODORI* 🍕🔥");
+    L.push("");
+    L.push("*Pizzas*");
+    state.pizzas.forEach(function(pz, i){
+      L.push((i+1) + ") " + (pz.qtd>1?pz.qtd+"x ":"") + descSabores(pz.sabores) + (pz.tipo === "doce" ? " (DOCE)" : ""));
+      L.push("   " + pz.tamanho + " • massa " + pz.massa + (pz.borda ? " • borda " + pz.borda : ""));
+      if (pz.obs) L.push("   Obs: " + pz.obs);
+    });
+    var bk = Object.keys(state.bebidas);
+    if (bk.length){
+      L.push("");
+      L.push("*Bebidas*");
+      bk.forEach(function(k){ L.push("• " + state.bebidas[k] + "x " + k); });
+    }
+    var c = state.cliente;
+    L.push("");
+    L.push("*Entrega*");
+    L.push("Nome: " + (c.nome || "—"));
+    var end = (c.endereco || "—") + (c.bairro ? " — " + c.bairro : "");
+    L.push("Endereço: " + end);
+    if (c.complemento) L.push("Compl.: " + c.complemento);
+    var pag = c.pagamento || "—";
+    if (c.pagamento === "Dinheiro" && c.troco) pag += " (troco p/ " + c.troco + ")";
+    L.push("Pagamento: " + pag);
+    if (c.obs) L.push("Obs: " + c.obs);
+    L.push("");
+    L.push("_Pedido montado pelo app da Pomodori. Aguardo a confirmação do valor e do tempo de entrega._");
+    return L.join("\n");
+  }
+
+  $("btn-enviar").addEventListener("click", function(){
+    if (!totalItens()){ showToast("Seu pedido está vazio"); return; }
+    var c = state.cliente;
+    if (!c.nome || !c.nome.trim() || !c.endereco || !c.endereco.trim()){
+      showToast("Preencha nome e endereço para entrega");
+      (!c.nome ? $("c-nome") : $("c-endereco")).focus();
+      return;
+    }
+    var url = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(buildMessage());
+    window.open(url, "_blank", "noopener");
+  });
+
+  $("btn-limpar").addEventListener("click", function(){
+    if (!confirm("Limpar todo o pedido?")) return;
+    state.pizzas = []; state.bebidas = {}; save();
+    renderPedido(); renderCheckoutItens(); closeSheet("sheet-checkout");
+    showToast("Pedido limpo");
+  });
+
+  // ========================================================
+  //  FOLHAS (abrir/fechar) + toast
+  // ========================================================
+  function openSheet(id){ var s = $(id); s.classList.add("open"); s.setAttribute("aria-hidden","false"); document.body.style.overflow = "hidden"; }
+  function closeSheet(id){ var s = $(id); s.classList.remove("open"); s.setAttribute("aria-hidden","true"); document.body.style.overflow = ""; }
+  document.querySelectorAll("[data-close]").forEach(function(el){
+    el.addEventListener("click", function(){ closeSheet(el.closest(".sheet").id); });
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape"){ var open = document.querySelector(".sheet.open"); if (open) closeSheet(open.id); }
+  });
+
+  var toastTimer;
+  function showToast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2200);
+  }
+
+  // ---------- botões principais ----------
+  $("btn-montar-salgada").addEventListener("click", function(){ abrirMontar("salgada"); });
+  $("btn-montar-doce").addEventListener("click", function(){ abrirMontar("doce"); });
+  $("btn-bebidas").addEventListener("click", function(){ renderBebidas(); openSheet("sheet-bebidas"); });
+  $("btn-ver-pedido").addEventListener("click", abrirCheckout);
+
+  // ---------- botão "Instalar app" ----------
+  var btnInstalar = $("btn-instalar");
+  var deferredPrompt = null;
+
+  function ehStandalone(){
+    return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  }
+  function ehIOS(){
+    return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  }
+
+  // Android / desktop Chrome: o navegador avisa quando dá pra instalar
+  window.addEventListener("beforeinstallprompt", function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!ehStandalone()){
+      btnInstalar.textContent = "📲 Instalar o app no celular";
+      btnInstalar.style.display = "block";
+    }
+  });
+  window.addEventListener("appinstalled", function(){
+    deferredPrompt = null;
+    btnInstalar.style.display = "none";
+    showToast("App instalado! 🍕");
+  });
+
+  // iPhone não tem instalação automática — mostrar botão com o passo a passo
+  if (ehIOS() && !ehStandalone()){
+    btnInstalar.textContent = "📲 Como instalar no iPhone";
+    btnInstalar.style.display = "block";
+  }
+
+  btnInstalar.addEventListener("click", function(){
+    if (deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(){ deferredPrompt = null; btnInstalar.style.display = "none"; });
+    } else if (ehIOS()){
+      openSheet("sheet-ios");
+    }
+  });
+
+  // já instalado: nunca mostrar o botão
+  if (ehStandalone()) btnInstalar.style.display = "none";
+
+  // ---------- service worker (PWA offline) ----------
+  if ("serviceWorker" in navigator){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
+
+  // ---------- primeira renderização ----------
+  renderPedido();
+})();
+</script>
+</body>
+</html>
