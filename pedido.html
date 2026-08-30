@@ -42,6 +42,18 @@
 
   main{max-width:720px;margin:0 auto;padding:22px 16px 150px;}
 
+  /* tela de instalação (gate) */
+  #gate{max-width:480px;margin:0 auto;padding:40px 22px max(40px,env(safe-area-inset-bottom));min-height:70vh;display:flex;align-items:center;}
+  .gate-inner{text-align:center;width:100%;}
+  .gate-logo{margin-bottom:22px;}
+  .gate-logo .logo{width:110px;height:110px;}
+  .gate-logo img{height:110px !important;width:110px !important;}
+  .gate-title{font-family:'Figtree',system-ui,sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-size:clamp(26px,7vw,36px);line-height:1.08;margin-bottom:12px;}
+  .gate-sub{color:var(--muted);font-size:16px;line-height:1.55;margin:0 auto 28px;max-width:360px;}
+  #gate .btn{max-width:360px;margin:0 auto;}
+  .gate-note{font-size:13.5px;line-height:1.5;color:var(--muted);margin:18px auto 0;max-width:360px;}
+  .gate-note b{color:var(--gold);}
+
   .intro h1{font-family:'Figtree',system-ui,sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.3px;font-size:clamp(28px,7vw,40px);line-height:1.05;margin-bottom:8px;}
   .intro p{color:var(--muted);font-size:15px;line-height:1.5;margin:0 0 22px;}
 
@@ -165,13 +177,22 @@
     </div>
   </header>
 
-  <main>
+  <!-- ============ TELA DE INSTALAÇÃO (aparece só no navegador) ============ -->
+  <section id="gate" style="display:none;">
+    <div class="gate-inner">
+      <div class="gate-logo"><span class="logo" data-size="16"></span></div>
+      <h1 class="gate-title">Peça pelo nosso app</h1>
+      <p class="gate-sub">Para montar seu pedido, instale o app da Pomodori no seu celular. É grátis, rápido e ocupa quase nada.</p>
+      <button class="btn btn-gold" id="btn-instalar">📲 Instalar o app</button>
+      <p class="gate-note" id="gate-note"></p>
+    </div>
+  </section>
+
+  <main id="app-pedido" style="display:none;">
     <div class="intro">
       <h1>Monte seu pedido</h1>
       <p>Escolha o tamanho, a massa e até 2 sabores. No final, o pedido vai pronto pro nosso WhatsApp — é só confirmar.</p>
     </div>
-
-    <button class="btn btn-instalar" id="btn-instalar" style="display:none;">📲 Instalar o app no celular</button>
 
     <div class="montar-botoes">
       <button class="btn btn-gold" id="btn-montar-salgada">🍕 Montar pizza salgada</button>
@@ -576,7 +597,8 @@
   function updateBar(){
     var n = totalItens();
     $("bar-count").textContent = n;
-    $("bar").classList.toggle("show", n > 0);
+    var appVisivel = $("app-pedido").style.display !== "none";
+    $("bar").classList.toggle("show", n > 0 && appVisivel);
   }
 
   // ========================================================
@@ -734,8 +756,9 @@
   $("btn-bebidas").addEventListener("click", function(){ renderBebidas(); openSheet("sheet-bebidas"); });
   $("btn-ver-pedido").addEventListener("click", abrirCheckout);
 
-  // ---------- botão "Instalar app" ----------
+  // ---------- portão: instalar (navegador) x pedir (app instalado) ----------
   var btnInstalar = $("btn-instalar");
+  var gateNote = $("gate-note");
   var deferredPrompt = null;
 
   function ehStandalone(){
@@ -744,39 +767,64 @@
   function ehIOS(){
     return /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
   }
+  // navegadores dentro de outros apps (não conseguem instalar PWA)
+  function ehInApp(){
+    return /Instagram|FBAN|FBAV|FB_IAB|Line\/|Twitter|GSA\//i.test(navigator.userAgent);
+  }
 
-  // Android / desktop Chrome: o navegador avisa quando dá pra instalar
+  function mostrarApp(){
+    $("gate").style.display = "none";
+    $("app-pedido").style.display = "block";
+    renderPedido();
+  }
+  function mostrarGate(){
+    $("app-pedido").style.display = "none";
+    $("bar").classList.remove("show");
+    $("gate").style.display = "flex";
+    configurarGate();
+  }
+  function configurarGate(){
+    if (ehInApp()){
+      btnInstalar.style.display = "none";
+      gateNote.innerHTML = "Você abriu por dentro do Instagram/Facebook. Toque no menu <b>⋯</b> e escolha <b>“Abrir no navegador”</b> (Chrome ou Safari) para instalar o app.";
+    } else if (ehIOS()){
+      btnInstalar.textContent = "📲 Como instalar no iPhone";
+      btnInstalar.style.display = "block";
+      gateNote.innerHTML = "No iPhone, o app se instala pelo Safari em 3 toquinhos.";
+    } else {
+      btnInstalar.textContent = "📲 Instalar o app";
+      btnInstalar.style.display = "block";
+      gateNote.innerHTML = "";
+    }
+  }
+
   window.addEventListener("beforeinstallprompt", function(e){
     e.preventDefault();
     deferredPrompt = e;
-    if (!ehStandalone()){
-      btnInstalar.textContent = "📲 Instalar o app no celular";
+    if (!ehStandalone() && !ehIOS() && !ehInApp()){
+      btnInstalar.textContent = "📲 Instalar o app";
       btnInstalar.style.display = "block";
     }
   });
   window.addEventListener("appinstalled", function(){
     deferredPrompt = null;
     btnInstalar.style.display = "none";
-    showToast("App instalado! 🍕");
+    gateNote.innerHTML = "App instalado! Agora abra a <b>Pomodori</b> pelo ícone na sua tela inicial. 🍕";
   });
-
-  // iPhone não tem instalação automática — mostrar botão com o passo a passo
-  if (ehIOS() && !ehStandalone()){
-    btnInstalar.textContent = "📲 Como instalar no iPhone";
-    btnInstalar.style.display = "block";
-  }
 
   btnInstalar.addEventListener("click", function(){
     if (deferredPrompt){
       deferredPrompt.prompt();
-      deferredPrompt.userChoice.then(function(){ deferredPrompt = null; btnInstalar.style.display = "none"; });
+      deferredPrompt.userChoice.then(function(){ deferredPrompt = null; });
     } else if (ehIOS()){
       openSheet("sheet-ios");
+    } else {
+      gateNote.innerHTML = "Se a instalação não abriu, toque no menu do navegador (⋮) e escolha <b>“Instalar app”</b>. Se já instalou, abra pela <b>Pomodori</b> na tela inicial.";
     }
   });
 
-  // já instalado: nunca mostrar o botão
-  if (ehStandalone()) btnInstalar.style.display = "none";
+  // decide o que aparece
+  if (ehStandalone()) mostrarApp(); else mostrarGate();
 
   // ---------- service worker (PWA offline) ----------
   if ("serviceWorker" in navigator){
