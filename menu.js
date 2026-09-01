@@ -1,6 +1,6 @@
 /* Pomodori — fonte única do cardápio.
    Usado por cardapio.html (vitrine) e pedido.html (app de pedido),
-   para não manter duas cópias das mesmas 78 pizzas. */
+   para não manter duas cópias das mesmas 79 pizzas. */
 
 const MENU = {
   tradicionais: [
@@ -47,6 +47,7 @@ const MENU = {
     { n: "41", nome: "Lombo", ing: "Lombo canadense e cebola" },
     { n: "42", nome: "Marguerita", ing: "Mussarela, manjericão, parmesão e tomate" },
     { n: "43", nome: "Mexicana", ing: "Atum, champignon, mussarela e bacon" },
+    { nome: "Milho", ing: "Milho verde e mussarela" },
     { n: "44", nome: "Milho Verde", ing: "Milho verde e catupiry" },
     { n: "45", nome: "Mussarela", ing: "Mussarela" },
     { n: "46", nome: "Napoalho", ing: "Mussarela, parmesão, tomate e alho frito" },
@@ -62,6 +63,7 @@ const MENU = {
     { n: "56", nome: "Rúcula", ing: "Mussarela de búfala, tomate seco e rúcula" },
     { n: "58", nome: "Siciliana", ing: "Bacon, champignon e mussarela" },
     { n: "59", nome: "Toscana", ing: "Calabresa moída e mussarela" },
+    { nome: "Toscana Fatiada", ing: "Calabresa fatiada e mussarela" },
     { n: "60", nome: "Três Queijos", ing: "Mussarela, catupiry e parmesão" },
     { n: "61", nome: "Tropical", ing: "Palmito, cebola, ervilha e mussarela de búfala" },
     { n: "62", nome: "Camarão", ing: "Camarão, ervilha, ovo, cebola coberta com mussarela" },
@@ -98,13 +100,19 @@ const OPCOES = {
   tamanhoPadrao: "Grande",     // já vem selecionado
   massas: ["Fina", "Média", "Grossa"],
   massaPadrao: "Média",        // já vem selecionada (fica no meio)
-  maxSabores: 2,               // até 2 sabores na mesma pizza (inteira ou ½+½)
+  maxSabores: 3,               // até 3 sabores na mesma pizza (inteira, ½+½ ou ⅓+⅓+⅓)
   // Sabores de borda recheada — CONFIRMAR com a pizzaria:
   bordas: ["Catupiry", "Cheddar", "Cream cheese"],
-  // Promoção: pizza com esses sabores sai por um valor fixo (até 2 sabores).
+  // Promoção: pizza montada SÓ com estes sabores sai por um valor fixo.
+  // Vale para 1 ou 2 sabores; com 3 sabores o valor volta a ser o da tabela.
   promo: {
     preco: "R$ 64,90",
-    sabores: ["Mussarela", "Calabresa", "Marguerita", "Napolitana", "Dois Queijos", "Milho Verde"]
+    maxSabores: 2,
+    sabores: [
+      "Mussarela", "Calabresa", "Marguerita", "Napolitana", "Dois Queijos", "Milho Verde",
+      "Abobrinha I", "Bauru", "Berinjela", "Escarola I", "Lombo",
+      "Milho", "Toscana Fatiada", "Brigadeiro"
+    ]
   },
   bebidas: [
     "Coca-Cola 2L", "Coca-Cola lata",

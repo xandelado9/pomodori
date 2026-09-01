@@ -158,6 +158,9 @@
   .row2 > *{flex:1;}
 
   .selected-note{font-size:13px;color:var(--gold);margin-top:8px;min-height:18px;}
+  .promo-nota{font-size:13px;line-height:1.45;margin-top:6px;}
+  .promo-nota.vale{color:#FFD23F;font-weight:700;}
+  .promo-nota.nao{color:var(--muted);}
   .disclaimer{font-size:12px;color:var(--muted);text-align:center;line-height:1.5;margin-top:14px;}
 
   .update-bar{position:fixed;left:50%;top:12px;transform:translateX(-50%) translateY(-140%);z-index:85;
@@ -198,7 +201,7 @@
   <main id="app-pedido" style="display:none;">
     <div class="intro">
       <h1>Monte seu pedido</h1>
-      <p>Escolha o tamanho, a massa e até 2 sabores. No final, o pedido vai pronto pro nosso WhatsApp — é só confirmar.</p>
+      <p>Escolha o tamanho, a massa e até 3 sabores. No final, o pedido vai pronto pro nosso WhatsApp — é só confirmar.</p>
     </div>
 
     <div class="montar-botoes">
@@ -246,6 +249,7 @@
         <span class="label">Sabores <span class="hint" id="sabor-hint"></span></span>
         <input class="search" id="busca-sabor" type="search" placeholder="Buscar sabor (ex.: calabresa, mussarela...)" autocomplete="off">
         <div class="selected-note" id="sabor-nota"></div>
+        <div class="promo-nota" id="sabor-promo"></div>
         <div class="flavors" id="lista-sabores"></div>
 
         <div id="bloco-borda">
@@ -379,8 +383,24 @@
 
   // sabores em promoção (valor fixo) — para o selo na lista
   var PROMO = OPCOES.promo || { preco:"", sabores:[] };
+  var PROMO_MAX = PROMO.maxSabores || 2;
   var promoSet = {};
   (PROMO.sabores || []).forEach(function(n){ promoSet[n] = true; });
+
+  // A promoção vale para pizza montada com até PROMO_MAX sabores,
+  // e todos eles têm de ser da lista da promoção.
+  function promoAplica(pz){
+    if (!pz) return false;
+    var s = pz.sabores || [];
+    if (!s.length || s.length > PROMO_MAX) return false;
+    for (var i = 0; i < s.length; i++){ if (!promoSet[s[i]]) return false; }
+    return true;
+  }
+  function promoQtd(sabores){
+    var k = 0;
+    (sabores || []).forEach(function(s){ if (promoSet[s]) k++; });
+    return k;
+  }
 
   // ---------- estado ----------
   var STORE_KEY = "pomodori_pedido_v1";
@@ -528,7 +548,30 @@
     var rotulo = max === 1 ? "(1 sabor)" : "(até " + max + " — " + draft.sabores.length + " escolhido" + (draft.sabores.length===1?"":"s") + ")";
     $("sabor-hint").textContent = rotulo;
     $("sabor-nota").textContent = draft.sabores.length ? descSabores(draft.sabores) : "";
+    updatePromoUI();
     $("btn-add-pizza").disabled = draft.sabores.length === 0;
+  }
+
+  // Explica para o cliente quando a promoção vale (e quando deixa de valer).
+  function updatePromoUI(){
+    var el = $("sabor-promo");
+    if (!el) return;
+    el.className = "promo-nota";
+    el.textContent = "";
+    if (!draft.sabores.length) return;
+
+    var naPromo = promoQtd(draft.sabores);
+    if (promoAplica(draft)){
+      el.className = "promo-nota vale";
+      el.textContent = "🍌 Promoção " + PROMO.preco + " — vale para esta pizza.";
+    } else if (naPromo === draft.sabores.length && draft.sabores.length > PROMO_MAX){
+      el.className = "promo-nota nao";
+      el.textContent = "A promoção " + PROMO.preco + " vale para até " + PROMO_MAX +
+        " sabores. Com " + draft.sabores.length + ", o valor é o da tabela.";
+    } else if (naPromo){
+      el.className = "promo-nota nao";
+      el.textContent = "A promoção " + PROMO.preco + " vale quando todos os sabores são da promoção.";
+    }
   }
 
   $("busca-sabor").addEventListener("input", renderSabores);
@@ -569,6 +612,7 @@
           '<div class="item-body">' +
             '<div class="item-title">' + esc(descSabores(pz.sabores)) + (pz.tipo === "doce" ? ' <span style="color:var(--gold);font-size:12px;">🍫 doce</span>' : '') + '</div>' +
             '<div class="item-sub">' + esc(pizzaLinhaCurta(pz)) + '</div>' +
+            (promoAplica(pz) ? '<div class="item-tag">🍌 Promoção ' + esc(PROMO.preco) + '</div>' : '') +
             (pz.borda ? '<div class="item-tag">Borda: ' + esc(pz.borda) + '</div>' : '') +
             (pz.obs ? '<div class="item-tag">Obs: ' + esc(pz.obs) + '</div>' : '') +
             '<div style="margin-top:8px;"><button class="link" data-edit="' + idx + '">Editar</button></div>' +
@@ -686,6 +730,7 @@
       html += '<div class="item"><div class="item-body">' +
         '<div class="item-title">' + (pz.qtd>1?pz.qtd+"x ":"") + esc(descSabores(pz.sabores)) + (pz.tipo === "doce" ? ' 🍫' : '') + '</div>' +
         '<div class="item-sub">' + esc(pizzaLinhaCurta(pz)) + (pz.borda?" · borda "+esc(pz.borda):"") + '</div>' +
+        (promoAplica(pz)?'<div class="item-tag">🍌 Promoção '+esc(PROMO.preco)+'</div>':'') +
         (pz.obs?'<div class="item-tag">Obs: '+esc(pz.obs)+'</div>':'') +
       '</div></div>';
     });
@@ -715,7 +760,8 @@
     L.push("*Pizzas*");
     state.pizzas.forEach(function(pz, i){
       L.push((i+1) + ") " + (pz.qtd>1?pz.qtd+"x ":"") + descSabores(pz.sabores) + (pz.tipo === "doce" ? " (DOCE)" : ""));
-      L.push("   " + pz.tamanho + " • massa " + pz.massa + (pz.borda ? " • borda " + pz.borda : ""));
+      L.push("   " + pz.tamanho + " • massa " + pz.massa + (pz.borda ? " • borda " + pz.borda : "") +
+        (promoAplica(pz) ? " • PROMO " + PROMO.preco : ""));
       if (pz.obs) L.push("   Obs: " + pz.obs);
     });
     var bk = Object.keys(state.bebidas);
