@@ -104,12 +104,12 @@ const OPCOES = {
   // Sabores de borda recheada — CONFIRMAR com a pizzaria:
   bordas: ["Catupiry", "Cheddar", "Cream cheese"],
   // Promoção: pizza montada SÓ com estes sabores sai por um valor fixo.
-  // Vale para 1 ou 2 sabores; com 3 sabores o valor volta a ser o da tabela.
+  // Pizza da promoção é de até 2 sabores — o app não deixa escolher um 3º.
   promo: {
     preco: "R$ 64,90",
     maxSabores: 2,
     sabores: [
-      "Mussarela", "Calabresa", "Marguerita", "Napolitana", "Dois Queijos", "Milho Verde",
+      "Mussarela", "Calabresa", "Marguerita", "Napolitana", "Dois Queijos",
       "Abobrinha I", "Bauru", "Berinjela", "Escarola I", "Lombo",
       "Milho", "Toscana Fatiada", "Brigadeiro"
     ]

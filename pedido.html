@@ -401,6 +401,17 @@
     (sabores || []).forEach(function(s){ if (promoSet[s]) k++; });
     return k;
   }
+  // Pizza montada só com sabores da promoção para em PROMO_MAX sabores.
+  // Se entrar um sabor de fora, ela deixa de ser da promoção e vale o teto normal.
+  function soDaPromo(){
+    return promoQtd(draft.sabores) === draft.sabores.length;
+  }
+  function podeAdicionar(nome){
+    var n = draft.sabores.length;
+    if (n >= maxSaboresFor(draft.tipo)) return false;
+    if (promoSet[nome] && soDaPromo() && n >= PROMO_MAX) return false;
+    return true;
+  }
 
   // ---------- estado ----------
   var STORE_KEY = "pomodori_pedido_v1";
@@ -493,9 +504,6 @@
     var termo = norm($("busca-sabor").value);
     var host = $("lista-sabores");
     host.innerHTML = "";
-    var max = maxSaboresFor(draft.tipo);
-    var atingiuMax = draft.sabores.length >= max;
-
     var currentCat = "";
     flavorsFor(draft.tipo).forEach(function(f){
       if (termo && norm(f.nome + " " + f.ing).indexOf(termo) === -1) return;
@@ -507,7 +515,7 @@
         host.appendChild(h);
       }
       var on = draft.sabores.indexOf(f.nome) !== -1;
-      var dim = !on && atingiuMax;
+      var dim = !on && !podeAdicionar(f.nome);
       var isPromo = !!promoSet[f.nome];
       var b = document.createElement("button");
       b.className = "flavor" + (on ? " on" : "") + (dim ? " dim" : "") + (isPromo ? " promo" : "");
@@ -530,14 +538,17 @@
     var max = maxSaboresFor(draft.tipo);
     var i = draft.sabores.indexOf(nome);
     if (i !== -1){ draft.sabores.splice(i,1); }
+    else if (max === 1){
+      draft.sabores = [nome];   // doce: 1 sabor, troca direto em vez de bloquear
+    }
+    else if (!podeAdicionar(nome)){
+      showToast(draft.sabores.length >= max
+        ? "Máximo de " + max + " sabores por pizza"
+        : "Pizza da promoção é de até " + PROMO_MAX + " sabores");
+      return;
+    }
     else {
-      if (draft.sabores.length >= max){
-        // no modo doce (1 sabor) trocar direto em vez de bloquear
-        if (max === 1){ draft.sabores = [nome]; }
-        else { showToast("Máximo de " + max + " sabores por pizza"); return; }
-      } else {
-        draft.sabores.push(nome);
-      }
+      draft.sabores.push(nome);
     }
     renderSabores();
     updateSaborUI();
@@ -563,10 +574,11 @@
     var naPromo = promoQtd(draft.sabores);
     if (promoAplica(draft)){
       el.className = "promo-nota vale";
-      el.textContent = "🍌 Promoção " + PROMO.preco + " — vale para esta pizza.";
+      el.textContent = "🍌 Promoção " + PROMO.preco + " — vale para esta pizza." +
+        (draft.sabores.length >= PROMO_MAX ? " Pizza da promoção é de até " + PROMO_MAX + " sabores." : "");
     } else if (naPromo === draft.sabores.length && draft.sabores.length > PROMO_MAX){
       el.className = "promo-nota nao";
-      el.textContent = "A promoção " + PROMO.preco + " vale para até " + PROMO_MAX +
+      el.textContent = "Pizza da promoção é de até " + PROMO_MAX +
         " sabores. Com " + draft.sabores.length + ", o valor é o da tabela.";
     } else if (naPromo){
       el.className = "promo-nota nao";
@@ -858,6 +870,11 @@
   var gateNote = $("gate-note");
   var deferredPrompt = null;
 
+  // Só no computador de quem desenvolve: localhost não passa pelo portão de
+  // instalação, senão não dá para testar o app no navegador antes de publicar.
+  function ehLocal(){
+    return location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  }
   function ehStandalone(){
     return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
   }
@@ -942,7 +959,7 @@
   });
 
   // decide o que aparece
-  if (ehStandalone()) mostrarApp(); else mostrarGate();
+  if (ehStandalone() || ehLocal()) mostrarApp(); else mostrarGate();
 
   // ---------- service worker + atualização automática ----------
   function mostrarAtualizar(sw){
@@ -954,7 +971,7 @@
     };
   }
 
-  if ("serviceWorker" in navigator){
+  if ("serviceWorker" in navigator && !ehLocal()){
     window.addEventListener("load", function(){
       navigator.serviceWorker.register("sw.js").then(function(reg){
         // já existe uma versão nova esperando?
