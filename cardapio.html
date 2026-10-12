@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Cardápio — Pomodori Pizzaria</title>
+<!-- Dia das Criancas: ate o fim de 18/10/2026 (horario de SP) abre o cardapio
+     tematico. Depois disso o script nao faz nada — pode apagar quando quiser. -->
+<script>
+  if (Date.now() < Date.parse('2026-10-19T00:00:00-03:00')) location.replace('cardapio-dia-das-criancas.html' + location.hash);
+</script>
 <meta name="description" content="Cardápio completo da Pomodori: 64 pizzas tradicionais, novidades e pizzas doces, assadas no forno a lenha. Delivery na Mooca.">
 <!-- favicon gerado a partir de fotos/logo.png (o selo oficial).
      Caminhos relativos: funcionam no dominio proprio e tambem em

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cardápio Dia das Crianças — Pomodori Pizzaria</title>
+<meta name="description" content="Cardápio completo da Pomodori no Dia das Crianças: 64 pizzas tradicionais, novidades e pizzas doces, assadas no forno a lenha. Delivery na Mooca.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Figtree', system-ui, sans-serif; background: #0D0B08; color: #FBF8F1; -webkit-font-smoothing: antialiased; }
+  a { color: #E3B23C; text-decoration: none; }
+  a:hover { color: #FBF8F1; }
+  img { max-width: 100%; }
+  section[id] { scroll-margin-top: 130px; }
+
+  .logo { display: inline-flex; }
+  .logo[data-size="15"] { width: 96px; height: 96px; }
+
+  /* ---------- tema confete ---------- */
+  .baloo { font-family: 'Baloo 2', 'Figtree', sans-serif; font-weight: 800; }
+  .confete { position: absolute; inset: 0; pointer-events: none; }
+  .confete span { position: absolute; }
+  .faixa { height: 18px; background: repeating-linear-gradient(90deg,#D6291F 0 40px,#E3B23C 40px 80px,#3FB27F 80px 120px,#5B9BE6 120px 160px,#E77FB3 160px 200px); }
+
+  .hdr-nav { display: flex; align-items: center; gap: 22px; }
+  .hdr-nav a { color: #FBF8F1; font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .hdr-secao { display: none; }
+
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #E3B23C;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px #0D0B08;
+    border-radius: 6px;
+  }
+  @media (pointer: coarse) {
+    .hdr-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  }
+
+  @media (max-width: 760px) {
+    .rgrid { grid-template-columns: 1fr !important; }
+    .rgrid.lista { gap: 0 !important; }
+    .cardapio-galeria { grid-template-columns: 1fr 1fr !important; gap: 18px 14px !important; }
+    section[id] { scroll-margin-top: 136px; }
+    .hdr-inner { padding: 10px 18px !important; gap: 9px 14px !important; }
+    .hdr-logo { margin-right: auto; }
+    .hdr-logo .logo { width: 54px !important; height: 54px !important; }
+    .hdr-logo img { height: 54px !important; width: 54px !important; }
+    .hdr-cta { order: 2; }
+    .hdr-nav {
+      order: 3;
+      flex-basis: 100%;
+      gap: 18px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      border-top: 1px solid rgba(227,178,60,.16);
+      padding-top: 9px;
+    }
+    .hdr-nav::-webkit-scrollbar { display: none; }
+    .hdr-secao { display: inline-flex; }
+    .sec-pad { padding-left: 20px !important; padding-right: 20px !important; }
+    .cta-bloco { padding: 44px 24px !important; }
+    .sec-titulo { font-size: 30px !important; }
+    .doces-bloco h2 { font-size: 36px !important; }
+  }
+  @media (max-width: 520px) {
+    .sec-pad { padding-left: 16px !important; padding-right: 16px !important; }
+    .sec-titulo { font-size: 26px !important; }
+    .cta-bloco { padding: 36px 18px !important; border-radius: 22px !important; }
+    .cta-bloco h2 { font-size: 30px !important; }
+    .cta-apps { flex-direction: column; align-items: stretch; }
+    .cta-apps a { width: 100%; text-align: center; font-size: 16px !important; }
+    .hero-tags span { font-size: 12px !important; padding: 8px 14px !important; }
+    .doces-bloco { padding: 28px 20px !important; border-radius: 24px !important; }
+  }
+
+  @supports (padding: max(0px)) {
+    .hdr-inner {
+      padding-left: max(28px, env(safe-area-inset-left)) !important;
+      padding-right: max(28px, env(safe-area-inset-right)) !important;
+    }
+    .cta-safe { padding-bottom: max(90px, env(safe-area-inset-bottom)) !important; }
+    @media (max-width: 760px) {
+      .hdr-inner {
+        padding-left: max(18px, env(safe-area-inset-left)) !important;
+        padding-right: max(18px, env(safe-area-inset-right)) !important;
+      }
+    }
+  }
+
+  .galeria-nome {
+    display: block;
+    margin-top: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    color: rgba(251,248,241,.88);
+    text-align: center;
+    text-wrap: balance;
+  }
+  @media (max-width: 760px) { .galeria-nome { font-size: 13px; margin-top: 10px; } }
+
+  .zoom-photo img { transition: transform .6s ease; }
+  @media (hover: hover) and (pointer: fine) {
+    .zoom-photo:hover img { transform: scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .zoom-photo:hover img { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div style="min-height:100%;">
+
+  <div class="baloo" style="background:#E3B23C;color:#0D0B08;text-align:center;padding:9px 16px;font-size:16px;">Feliz Dia das Crianças! · 12 de outubro</div>
+
+  <!-- HEADER -->
+  <header style="position:sticky;top:0;z-index:50;background:rgba(13,11,8,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(227,178,60,.22);">
+    <div class="hdr-inner" style="max-width:1120px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+      <a class="hdr-logo" href="index.html" style="display:flex;align-items:center;margin-right:auto;">
+        <span class="logo" data-size="15"></span>
+      </a>
+      <nav class="hdr-nav" aria-label="Navegação do cardápio">
+        <a href="index.html" style-hover="color:#E3B23C;">← Voltar ao site</a>
+        <a class="hdr-secao" href="#sec-tradicionais" style-hover="color:#E3B23C;">Tradicionais</a>
+        <a class="hdr-secao" href="#sec-novidades" style-hover="color:#E3B23C;">Novidades</a>
+        <a class="hdr-secao" href="#sec-doces" style-hover="color:#E3B23C;">Doces</a>
+      </nav>
+      <a class="hdr-cta" href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="background:#D6291F;color:#FBF8F1;font-weight:700;font-size:14px;padding:13px 22px;border-radius:999px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir agora</a>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section style="position:relative;overflow:hidden;">
+    <div class="confete" aria-hidden="true">
+      <span style="left:8%;top:18%;width:14px;height:14px;border-radius:50%;background:#E3B23C;"></span>
+      <span style="left:20%;top:70%;width:10px;height:10px;background:#5B9BE6;transform:rotate(30deg);"></span>
+      <span style="left:30%;top:10%;width:9px;height:22px;border-radius:5px;background:#D6291F;transform:rotate(-28deg);"></span>
+      <span style="left:70%;top:14%;width:8px;height:20px;border-radius:4px;background:#E77FB3;transform:rotate(40deg);"></span>
+      <span style="left:82%;top:72%;width:14px;height:14px;border-radius:50%;background:#3FB27F;"></span>
+      <span style="left:92%;top:24%;width:12px;height:12px;background:#E3B23C;transform:rotate(15deg);"></span>
+    </div>
+    <div class="sec-pad" style="position:relative;max-width:1120px;margin:0 auto;padding:64px 28px 48px;text-align:center;">
+      <span style="font-family:'Space Mono',monospace;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:#E3B23C;">Cardápio completo</span>
+      <h1 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:clamp(38px,9vw,68px);line-height:1.02;margin:16px 0 20px;">Todos os <span style="font-style:italic;color:#E3B23C;">sabores</span></h1>
+      <p style="font-size:clamp(16px,4vw,19px);line-height:1.55;color:rgba(251,248,241,.75);max-width:640px;margin:0 auto;">Todas as pizzas são preparadas com molho de tomate, orégano e azeitonas, e assadas no forno a lenha. Só trabalhamos com produtos de primeira linha.</p>
+      <div class="hero-tags" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:30px;">
+        <span style="font-family:'Space Mono',monospace;font-size:13px;color:#0D0B08;background:#E3B23C;padding:9px 18px;border-radius:999px;transform:rotate(-2deg);">Massa: fina · média · grossa</span>
+        <span style="font-family:'Space Mono',monospace;font-size:13px;color:#0D0B08;background:#E77FB3;padding:9px 18px;border-radius:999px;transform:rotate(1.5deg);">Temos calzone</span>
+        <span style="font-family:'Space Mono',monospace;font-size:13px;color:#0D0B08;background:#5B9BE6;padding:9px 18px;border-radius:999px;transform:rotate(-1deg);">Delivery · Mooca</span>
+      </div>
+    </div>
+    <div class="faixa" aria-hidden="true"></div>
+  </section>
+
+  <!-- GALERIA -->
+  <section class="sec-pad" style="max-width:1120px;margin:0 auto;padding:56px 28px 8px;">
+    <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-weight:400;font-size:36px;line-height:1.1;margin:0 0 6px;text-align:center;">Assadas na <span style="color:#E3B23C;">brasa</span></h2>
+    <p style="text-align:center;font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(251,248,241,.6);margin:0 0 28px;">Algumas das nossas pizzas salgadas</p>
+    <div id="galeria" class="cardapio-galeria" style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px 20px;"></div>
+  </section>
+
+  <!-- TRADICIONAIS -->
+  <section id="sec-tradicionais" class="sec-pad" style="max-width:1120px;margin:0 auto;padding:56px 28px 20px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+      <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-weight:400;font-size:38px;margin:0;">Pizzas tradicionais</h2>
+      <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
+      <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">01–64</span>
+    </div>
+    <div id="tradicionais" class="rgrid lista" style="display:grid;grid-template-columns:1fr 1fr;gap:0 48px;"></div>
+  </section>
+
+  <!-- NOVIDADES -->
+  <section id="sec-novidades" class="sec-pad" style="max-width:1120px;margin:0 auto;padding:44px 28px 20px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+      <h2 class="sec-titulo" style="font-family:'DM Serif Display',serif;font-weight:400;font-size:38px;margin:0;color:#E3B23C;">Novidades</h2>
+      <span style="flex:1;height:1px;background:rgba(227,178,60,.3);"></span>
+    </div>
+    <div id="novidades" class="rgrid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;"></div>
+  </section>
+
+  <!-- DOCES -->
+  <section id="sec-doces" class="sec-pad" style="max-width:1120px;margin:40px auto 0;padding:0 28px;">
+    <div class="doces-bloco" style="background:#E77FB3;color:#0D0B08;border-radius:32px;padding:48px;position:relative;overflow:hidden;">
+      <div aria-hidden="true">
+        <span style="position:absolute;right:30px;top:24px;width:16px;height:16px;border-radius:50%;background:#E3B23C;"></span>
+        <span style="position:absolute;right:80px;top:56px;width:9px;height:22px;border-radius:5px;background:#5B9BE6;transform:rotate(30deg);"></span>
+        <span style="position:absolute;right:46px;top:96px;width:12px;height:12px;background:#FBF8F1;transform:rotate(20deg);"></span>
+      </div>
+      <span class="baloo" style="display:inline-flex;font-size:16px;background:#0D0B08;color:#E3B23C;padding:6px 16px;border-radius:999px;transform:rotate(-2deg);">Especial Dia das Crianças</span>
+      <h2 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:44px;margin:14px 0 18px;">Pizzas doces</h2>
+      <div id="doces" class="rgrid lista" style="display:grid;grid-template-columns:1fr 1fr;gap:0 40px;"></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="sec-pad cta-safe" style="max-width:1120px;margin:40px auto 0;padding:0 28px 90px;">
+    <div class="cta-bloco" style="background:#D6291F;border-radius:32px;padding:56px 40px;text-align:center;position:relative;overflow:hidden;">
+      <div aria-hidden="true" style="position:absolute;left:0;right:0;top:0;height:12px;background:repeating-linear-gradient(90deg,#E3B23C 0 40px,#3FB27F 40px 80px,#5B9BE6 80px 120px,#E77FB3 120px 160px);"></div>
+      <h2 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:clamp(30px,7vw,46px);line-height:1.05;margin:0 0 12px;color:#FBF8F1;">Escolheu? É só chamar.</h2>
+      <p style="font-size:clamp(16px,4vw,18px);color:rgba(251,248,241,.92);margin:0 0 30px;">Peça pelo WhatsApp ou pelos apps. Sai do forno e vai quentinho pra sua porta.</p>
+      <div class="cta-apps" style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+        <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="background:#0D0B08;color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:999px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir no WhatsApp</a>
+        <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="border:2px solid rgba(251,248,241,.7);color:#FBF8F1;font-weight:800;font-size:17px;padding:14px 28px;border-radius:999px;" style-hover="background:#0D0B08;color:#FBF8F1;">Pedir no iFood</a>
+        <a href="https://www.99app.com/" target="_blank" rel="noopener" style="border:2px solid rgba(251,248,241,.7);color:#FBF8F1;font-weight:800;font-size:17px;padding:14px 28px;border-radius:999px;" style-hover="background:#0D0B08;color:#FBF8F1;">Pedir no 99</a>
+        <a href="https://www.keeta.com/" target="_blank" rel="noopener" style="border:2px solid rgba(251,248,241,.7);color:#FBF8F1;font-weight:800;font-size:17px;padding:14px 28px;border-radius:999px;" style-hover="background:#0D0B08;color:#FBF8F1;">Pedir no Keeta</a>
+      </div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:rgba(251,248,241,.85);margin-top:22px;">Também no 99 e no Keeta · (11) 95551-4816</div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:rgba(251,248,241,.45);margin:26px 0 0;">Este site apresenta o cardápio e não processa pedidos nem pagamentos.</p>
+  </section>
+
+</div>
+
+<script src="menu.js"></script>
+<script>
+/* MENU vem de menu.js (fonte única do cardápio, compartilhada com cardapio.html e pedido.html). */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CORES = ['#E3B23C', '#3FB27F', '#5B9BE6', '#E77FB3', '#D6291F'];
+const cor = i => CORES[i % CORES.length];
+
+const GALERIA = [
+  { src: 'cardaio22.jpeg', w: 1080, h: 1423, nome: 'Escarola e Pomodori', alt: 'Pizza meio a meio: escarola com mussarela de um lado e Pomodori — presunto, bacon, champignon, palmito e catupiry — do outro' },
+  { src: 'cardapio23.jpeg', w: 1080, h: 1425, nome: 'Do Alemão', alt: 'Pizza Do Alemão: calabresa, cebola, tomate em rodelas e mussarela' },
+  { src: 'cardapio24.jpeg', w: 1080, h: 1427, nome: 'Atum e Quatro Queijos', alt: 'Pizza meio a meio: atum com cebola de um lado e quatro queijos do outro' },
+  { src: 'cardapio55.jpeg', w: 960, h: 1280, nome: 'Toscana e Marguerita', alt: 'Pizza meio a meio: Toscana, com calabresa moída e mussarela, e Marguerita' },
+  { src: 'cardapio66.jpeg', w: 1200, h: 1600, nome: 'Marguerita', alt: 'Pizza Marguerita: mussarela, manjericão, parmesão e tomate' },
+  { src: 'paracardapio1.jpg', w: 677, h: 842, nome: 'Quatro Queijos', alt: 'Pizza Quatro Queijos: mussarela, catupiry, provolone e parmesão' },
+  { src: 'paracardapio2.jpg', w: 672, h: 842, nome: 'Pepperoni e Marguerita', alt: 'Pizza meio a meio: pepperoni com mussarela de um lado e Marguerita do outro' },
+  { src: 'lite.jpg', w: 632, h: 861, nome: 'Light', alt: 'Pizza Light: peito de peru, palmito, tomate cereja e mussarela de búfala' }
+];
+
+document.getElementById('galeria').innerHTML = GALERIA.map((g, i) => `
+  <figure style="margin:0;">
+    <div class="zoom-photo" style="aspect-ratio:1/1;border-radius:22px;overflow:hidden;border:3px solid ${cor(i)};box-shadow:6px 6px 0 ${cor(i)};">
+      <img src="fotos/${g.src}" width="${g.w}" height="${g.h}" loading="lazy" decoding="async" alt="${esc(g.alt)}" style="width:100%;height:100%;object-fit:cover;display:block;">
+    </div>
+    <figcaption class="galeria-nome">${esc(g.nome)}</figcaption>
+  </figure>`).join('');
+
+document.getElementById('tradicionais').innerHTML = MENU.tradicionais.map((p, i) => `
+  <div style="display:flex;gap:14px;padding:15px 0;border-bottom:1px solid rgba(251,248,241,.1);">
+    <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#0D0B08;background:${cor(i)};border-radius:999px;min-width:34px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${esc(p.n || '')}</span>
+    <div>
+      <div style="font-weight:700;font-size:17px;">${esc(p.nome)}</div>
+      <div style="font-size:14px;line-height:1.45;color:rgba(251,248,241,.65);margin-top:3px;">${esc(p.ing)}</div>
+    </div>
+  </div>`).join('');
+
+document.getElementById('novidades').innerHTML = MENU.novidades.map((p, i) => `
+  <div style="background:#FBF8F1;color:#0D0B08;border-radius:22px;padding:22px;border:2px solid #0D0B08;box-shadow:6px 6px 0 ${cor(i)};">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;">
+      <div style="font-family:'DM Serif Display',serif;font-size:24px;">${esc(p.nome)}</div>
+      <span style="font-family:'Space Mono',monospace;font-size:10px;color:#0D0B08;background:${cor(i)};padding:4px 9px;border-radius:999px;font-weight:700;">NOVIDADE</span>
+    </div>
+    <div style="font-size:15px;line-height:1.5;color:#4a453d;margin-top:8px;">${esc(p.ing)}</div>
+  </div>`).join('');
+
+document.getElementById('doces').innerHTML = MENU.doces.map(p => `
+  <div style="display:flex;gap:14px;padding:14px 0;border-bottom:1.5px dashed rgba(13,11,8,.25);">
+    <span style="font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:#FBF8F1;background:#0D0B08;border-radius:8px;padding:2px 8px;height:fit-content;">${esc(p.n || '')}</span>
+    <div>
+      <div style="font-weight:800;font-size:17px;">${esc(p.nome)}</div>
+      <div style="font-size:14px;line-height:1.45;color:#3a2a30;margin-top:3px;">${esc(p.ing)}</div>
+    </div>
+  </div>`).join('');
+</script>
+<script src="app.js"></script>
+
+<!-- Cloudflare Web Analytics — sem cookies. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7ec39b6f096c4d1da0219e6fb667c85f"}'></script>
+</body>
+</html>
