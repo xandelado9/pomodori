@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dia das Crianças — Pomodori Pizzaria</title>
+<meta name="description" content="Feliz Dia das Crianças! Pizza de forno a lenha na Mooca desde 1987, entregue quente em cerca de 40 minutos. Peça pelo WhatsApp, iFood, 99 ou Keeta.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Baloo 2 volta so nesta pagina, so no peso 800: e a voz "festa" dos rotulos. -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;600;700;800&family=Space+Mono:wght@400;700&family=Baloo+2:wght@800&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="fotos/ilustracao-crianca.svg" fetchpriority="high">
+<style>
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font-family: 'Figtree', system-ui, sans-serif; background: #FBF8F1; color: #0D0B08; -webkit-font-smoothing: antialiased; }
+  a { color: #D6291F; text-decoration: none; }
+  a:hover { color: #1B4A3F; }
+  section[id] { scroll-margin-top: 88px; }
+  .logo { display: inline-flex; }
+  .logo[data-size="15"] { width: 96px; height: 96px; }
+  .logo[data-size="16"] { width: 102px; height: 102px; }
+
+  /* ---------- tema confete ---------- */
+  .baloo { font-family: 'Baloo 2', 'Figtree', sans-serif; font-weight: 800; }
+  .confete { position: absolute; inset: 0; pointer-events: none; }
+  .confete span { position: absolute; }
+  .faixa { height: 18px; background: repeating-linear-gradient(90deg,#D6291F 0 40px,#E3B23C 40px 80px,#3FB27F 80px 120px,#5B9BE6 120px 160px,#E77FB3 160px 200px); }
+  .card-pilar { background: #fff; border-radius: 28px; padding: 34px; border: 2px solid #0D0B08; }
+  .card-pilar .forma { width: 56px; height: 56px; margin-bottom: 22px; }
+  .card-pilar h3 { margin: 0; font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 52px; line-height: .95; }
+  .card-pilar .rotulo { margin: 12px 0 14px; font-family: 'Space Mono', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
+  .card-pilar p { margin: 0; font-size: 17px; line-height: 1.6; color: #4a453d; }
+
+  /* ---------- camada responsiva ---------- */
+  img, svg { max-width: 100%; }
+  .leaflet-container img { max-width: none !important; }
+  .leaflet-tile-pane { filter: saturate(.88) contrast(.97); }
+  .leaflet-container { background: #f2ecde; font-family: 'Figtree', sans-serif; }
+  @media (max-width: 900px) {
+    .rgrid { grid-template-columns: 1fr !important; }
+    .hero-h1 { font-size: 46px !important; }
+    .hero-pad { padding: 60px 22px 72px !important; }
+    .s-pad { padding-left: 22px !important; padding-right: 22px !important; padding-top: 68px !important; padding-bottom: 68px !important; }
+    .sec-head { gap: 20px !important; }
+  }
+  @media (max-width: 640px) {
+    .hdr-inner { padding: 10px 18px !important; gap: 9px 14px !important; justify-content: space-between !important; align-items: center !important; }
+    .hdr-logo { flex-basis: auto !important; margin-right: 0 !important; }
+    .hdr-cta-wrap { order: 2; }
+    .hdr-cta-wrap a { font-size: 14px !important; padding: 11px 20px !important; }
+    .hdr-links { order: 3; flex-basis: 100% !important; justify-content: space-between !important; gap: 0 !important; border-top: 1px solid rgba(227,178,60,.16); padding-top: 9px; }
+    section[id] { scroll-margin-top: 108px; }
+  }
+  @media (max-width: 560px) {
+    .hero-h1 { font-size: 36px !important; }
+    h2 { font-size: 32px !important; }
+    h3 { font-size: 23px !important; }
+    .card-pilar h3 { font-size: 42px !important; }
+    .card-pilar { padding: 28px !important; }
+    .hero-pad { padding: 42px 18px 56px !important; }
+    .hero-lead { font-size: 17px !important; }
+    .hero-selo { width: 96px !important; height: 96px !important; font-size: 15px !important; right: -6px !important; }
+    .s-pad { padding-left: 18px !important; padding-right: 18px !important; padding-top: 54px !important; padding-bottom: 54px !important; }
+    .cta-main { width: 100% !important; justify-content: center !important; font-size: 17px !important; padding: 16px 20px !important; }
+    .stats-row > div > div:first-child { font-size: 40px !important; }
+    .mapa .motoboy { width: 58px !important; right: 8px !important; bottom: 8px !important; }
+    .mapa-legend { gap: 8px 12px !important; font-size: 11px !important; }
+    .foot-bottom { justify-content: flex-start !important; gap: 12px !important; margin-top: 40px !important; }
+    .foot-bottom span { text-align: left !important; max-width: none !important; }
+    .sec-head { gap: 18px !important; }
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #E3B23C;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 6px #0D0B08;
+    border-radius: 6px;
+  }
+  @media (pointer: coarse) {
+    .hdr-links a, .foot-links a { display: inline-flex; align-items: center; min-height: 44px; }
+  }
+  @media (max-width: 900px) {
+    .hero-photo-wrap, .sobre-photo-wrap, .mapa-wrap { max-width: 440px; margin-left: auto; margin-right: auto; }
+  }
+  @media (max-width: 900px) and (orientation: landscape) {
+    .hero-photo-wrap, .sobre-photo-wrap, .mapa-wrap { max-width: 330px; }
+  }
+
+  .mapa-ativar {
+    position: absolute; inset: 0; z-index: 600;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(13,11,8,.32);
+    border: 0; width: 100%; padding: 0;
+    font-family: 'Figtree', system-ui, sans-serif; font-size: 15px; font-weight: 700;
+    color: #0D0B08; cursor: pointer; -webkit-tap-highlight-color: transparent;
+  }
+  .mapa-ativar span { background: #E3B23C; padding: 12px 20px; border-radius: 999px; box-shadow: 0 6px 18px rgba(13,11,8,.35); }
+
+  @supports (padding: max(0px)) {
+    .hdr-inner {
+      padding-left: max(28px, env(safe-area-inset-left)) !important;
+      padding-right: max(28px, env(safe-area-inset-right)) !important;
+    }
+    .foot-safe { padding-bottom: max(40px, env(safe-area-inset-bottom)) !important; }
+    @media (max-width: 640px) {
+      .hdr-inner {
+        padding-left: max(18px, env(safe-area-inset-left)) !important;
+        padding-right: max(18px, env(safe-area-inset-right)) !important;
+      }
+    }
+  }
+</style>
+</head>
+<body>
+<div style="min-height:100%;">
+
+  <!-- FAIXA DA DATA -->
+  <div class="baloo" style="background:#E3B23C;color:#0D0B08;text-align:center;padding:9px 16px;font-size:16px;letter-spacing:.3px;">Feliz Dia das Crianças! · 12 de outubro</div>
+
+  <!-- HEADER -->
+  <header style="position:sticky;top:0;z-index:50;background:rgba(13,11,8,.94);backdrop-filter:blur(8px);border-bottom:1px solid rgba(227,178,60,.22);">
+    <div class="hdr-inner" style="max-width:1200px;margin:0 auto;padding:12px 28px;display:flex;align-items:center;gap:20px 28px;flex-wrap:wrap;">
+      <a class="hdr-logo" href="#topo" style="display:flex;align-items:center;margin-right:auto;margin-left:10px;">
+        <span class="logo" data-size="15"></span>
+      </a>
+      <nav class="hdr-links" style="display:flex;align-items:center;gap:28px;flex-wrap:wrap;">
+        <a href="#sobre" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">Sobre</a>
+        <a href="#entrega" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">Entrega</a>
+        <a href="#contato" style="color:#FBF8F1;font-weight:600;font-size:15px;" style-hover="color:#E3B23C;">Contato</a>
+      </nav>
+      <div class="hdr-cta-wrap" style="display:flex;">
+        <a href="cardapio.html" style="background:#E3B23C;color:#0D0B08;font-weight:800;font-size:15px;padding:12px 26px;border-radius:999px;" style-hover="background:#FBF8F1;color:#0D0B08;">Cardápio</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section id="topo" style="position:relative;background:#0D0B08;color:#FBF8F1;overflow:hidden;">
+    <div class="confete" aria-hidden="true">
+      <span style="left:6%;top:12%;width:14px;height:14px;border-radius:50%;background:#E3B23C;"></span>
+      <span style="left:18%;top:78%;width:10px;height:10px;background:#5B9BE6;transform:rotate(30deg);"></span>
+      <span style="left:31%;top:8%;width:9px;height:22px;border-radius:5px;background:#D6291F;transform:rotate(-28deg);"></span>
+      <span style="left:44%;top:88%;width:12px;height:12px;border-radius:50%;background:#3FB27F;"></span>
+      <span style="left:52%;top:18%;width:8px;height:20px;border-radius:4px;background:#E77FB3;transform:rotate(40deg);"></span>
+      <span style="left:62%;top:6%;width:12px;height:12px;background:#E3B23C;transform:rotate(15deg);"></span>
+      <span style="left:74%;top:84%;width:14px;height:14px;border-radius:50%;background:#5B9BE6;"></span>
+      <span style="left:88%;top:10%;width:9px;height:22px;border-radius:5px;background:#3FB27F;transform:rotate(-12deg);"></span>
+      <span style="left:94%;top:56%;width:11px;height:11px;border-radius:50%;background:#E77FB3;"></span>
+      <span style="left:3%;top:52%;width:8px;height:20px;border-radius:4px;background:#E77FB3;transform:rotate(60deg);"></span>
+      <span style="left:38%;top:46%;width:8px;height:8px;border-radius:50%;background:#E3B23C;opacity:.7;"></span>
+    </div>
+    <div class="rgrid hero-pad" style="position:relative;max-width:1200px;margin:0 auto;padding:84px 28px 92px;display:grid;grid-template-columns:1.15fr .85fr;gap:56px;align-items:center;">
+      <div>
+        <div class="baloo" style="display:inline-flex;align-items:center;gap:10px;background:#E77FB3;color:#0D0B08;padding:8px 18px;border-radius:999px;margin-bottom:26px;transform:rotate(-2deg);font-size:16px;">Especial Dia das Crianças</div>
+        <h1 class="hero-h1" style="font-family:'DM Serif Display',serif;font-weight:400;font-size:72px;line-height:1.02;margin:0 0 22px;letter-spacing:-.5px;">Forno a lenha.<br><span style="color:#E3B23C;font-style:italic;">Na sua porta</span> em minutos.</h1>
+        <p class="hero-lead" style="font-size:20px;line-height:1.55;color:rgba(251,248,241,.8);max-width:520px;margin:0 0 34px;">Pizzaria delivery na Mooca desde 1987. Massa de fermentação natural, assada na brasa e entregue ainda quente.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;margin-bottom:16px;">
+          <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" class="cta-main" style="display:inline-flex;align-items:center;gap:11px;background:#D6291F;color:#FBF8F1;font-weight:800;font-size:18px;padding:18px 32px;border-radius:14px;box-shadow:0 10px 30px rgba(214,41,31,.35);" style-hover="background:#E3B23C;color:#0D0B08;">
+            <svg width="21" height="21" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21h.01c5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.06c-.24.68-1.4 1.3-1.94 1.38-.5.07-1.13.1-1.82-.11-.42-.13-.96-.31-1.65-.61-2.9-1.25-4.79-4.17-4.94-4.36-.14-.19-1.18-1.57-1.18-3 0-1.43.75-2.13 1.02-2.42.27-.29.58-.36.77-.36.19 0 .39 0 .56.01.18.01.42-.07.66.5.24.58.82 2.01.89 2.16.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.17-.29.38-.42.51-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.61-.07.17-.19.7-.82.89-1.1.19-.28.38-.23.64-.14.26.09 1.69.8 1.98.94.29.14.48.21.55.33.07.12.07.69-.17 1.37z"/></svg>
+            Pedir no WhatsApp
+          </a>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+          <a href="https://www.ifood.com.br/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:16px;padding:13px 22px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">Pedir no iFood</a>
+          <a href="https://www.99app.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:16px;padding:13px 22px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">Pedir no 99</a>
+          <a href="https://www.keeta.com/" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;background:rgba(251,248,241,.06);color:#FBF8F1;font-weight:700;font-size:16px;padding:13px 22px;border-radius:12px;border:1px solid rgba(227,178,60,.45);" style-hover="border-color:#E3B23C;color:#E3B23C;">Pedir no Keeta</a>
+        </div>
+        <span style="display:inline-flex;font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;background:rgba(214,41,31,.14);border:1px solid rgba(214,41,31,.35);padding:9px 15px;border-radius:999px;">≈ 40 min · quente na porta</span>
+      </div>
+      <div class="hero-photo-wrap" style="position:relative;max-width:440px;width:100%;justify-self:center;">
+        <div class="hero-selo baloo" aria-hidden="true" style="position:absolute;right:-18px;top:-22px;z-index:3;width:120px;height:120px;border-radius:50%;background:#5B9BE6;color:#0D0B08;display:flex;align-items:center;justify-content:center;text-align:center;font-size:17px;line-height:1.05;transform:rotate(10deg);box-shadow:0 10px 24px rgba(0,0,0,.4);">12 de<br>outubro</div>
+        <div style="position:relative;aspect-ratio:3/4;border-radius:999px 999px 20px 20px;overflow:hidden;border:4px solid #E3B23C;box-shadow:0 30px 60px rgba(0,0,0,.55),10px 10px 0 #E77FB3,-10px 18px 0 #3FB27F;">
+          <img src="fotos/ilustracao-crianca.svg" alt="Ilustração de uma criança feliz comendo uma fatia de pizza" width="300" height="400" fetchpriority="high" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+          <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(13,11,8,.92) 0%,rgba(13,11,8,.5) 22%,transparent 45%);pointer-events:none;"></div>
+          <div style="position:absolute;left:22px;bottom:22px;right:22px;display:flex;flex-direction:column;gap:8px;pointer-events:none;">
+            <span style="align-self:flex-start;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#0D0B08;background:#E3B23C;padding:7px 13px;border-radius:999px;">Direto do forno</span>
+            <span style="font-family:'DM Serif Display',serif;font-size:22px;color:#FBF8F1;line-height:1.15;">Assada na brasa,<br>servida quentinha.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="faixa" aria-hidden="true"></div>
+  </section>
+
+  <!-- DIFERENCIAIS -->
+  <section>
+    <div class="s-pad rgrid" style="max-width:1200px;margin:0 auto;padding:96px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;">
+      <div class="card-pilar" style="box-shadow:6px 6px 0 #D6291F;">
+        <div class="forma" aria-hidden="true" style="border-radius:50%;background:#D6291F;"></div>
+        <h3 style="color:#D6291F;">Lenha.</h3>
+        <div class="rotulo" style="color:#D6291F;">Forno a lenha tradicional</div>
+        <p>Assada na brasa, no mesmo forno desde 1987. Fundo fino, crocante, com aquele gostinho de fogo que só a lenha dá.</p>
+      </div>
+      <div class="card-pilar" style="box-shadow:6px 6px 0 #E3B23C;">
+        <div class="forma" aria-hidden="true" style="border-radius:14px;background:#E3B23C;transform:rotate(12deg);"></div>
+        <h3 style="color:#94661A;">Tempo.</h3>
+        <div class="rotulo" style="color:#94661A;">Massa de fermentação natural</div>
+        <p>A massa descansa o tempo que precisa. Fica leve, macia e mais fácil de digerir. Sem pressa, do jeito certo.</p>
+      </div>
+      <div class="card-pilar" style="box-shadow:6px 6px 0 #3FB27F;">
+        <div class="forma" aria-hidden="true" style="background:#3FB27F;transform:rotate(45deg) scale(.8);"></div>
+        <h3 style="color:#1B4A3F;">Pressa.</h3>
+        <div class="rotulo" style="color:#1B4A3F;">Entrega rápida</div>
+        <p>Saiu do forno, foi pra rua. Em média <strong style="color:#D6291F;">40 minutos</strong> e a pizza chega quente na Mooca e região.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDAPIO DESTAQUES -->
+  <section id="cardapio" style="background:#1B4A3F;color:#FBF8F1;">
+    <div class="s-pad" style="max-width:1200px;margin:0 auto;padding:92px 28px;">
+      <div class="sec-head" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:44px;">
+        <div>
+          <span class="baloo" style="font-size:18px;color:#E3B23C;">O cardápio</span>
+          <h2 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:52px;margin:8px 0 0;line-height:1;">Alguns dos nossos sabores</h2>
+        </div>
+        <a href="cardapio.html" style="background:#E3B23C;color:#0D0B08;font-weight:800;font-size:16px;padding:15px 28px;border-radius:999px;" style-hover="background:#FBF8F1;color:#0D0B08;">Ver cardápio completo →</a>
+      </div>
+
+      <div class="rgrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+        <div style="background:rgba(251,248,241,.06);border:1px solid rgba(251,248,241,.14);border-radius:22px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#D6291F;flex-shrink:0;"></span><h3 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;margin:0;color:#FBF8F1;">Pomodori</h3></div>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">52</span>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.75);margin:10px 0 0;">Presunto, bacon, champignon, palmito e catupiry. A pizza da casa.</p>
+        </div>
+        <div style="background:rgba(251,248,241,.06);border:1px solid rgba(251,248,241,.14);border-radius:22px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#E3B23C;flex-shrink:0;"></span><h3 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;margin:0;color:#FBF8F1;">Marguerita</h3></div>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">42</span>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.75);margin:10px 0 0;">Mussarela, manjericão fresco, parmesão e tomate. Simples e certeira.</p>
+        </div>
+        <div style="background:rgba(251,248,241,.06);border:1px solid rgba(251,248,241,.14);border-radius:22px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#3FB27F;flex-shrink:0;"></span><h3 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;margin:0;color:#FBF8F1;">Portuguesa</h3></div>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">53</span>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.75);margin:10px 0 0;">Presunto, mussarela, ovo, cebola e ervilha. Clássica de sempre.</p>
+        </div>
+        <div style="background:rgba(251,248,241,.06);border:1px solid rgba(251,248,241,.14);border-radius:22px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#5B9BE6;flex-shrink:0;"></span><h3 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;margin:0;color:#FBF8F1;">Gorgonzola agridoce</h3></div>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">39</span>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.75);margin:10px 0 0;">Gorgonzola, mussarela, mel e nozes. Doce e salgado no ponto.</p>
+        </div>
+        <div style="background:rgba(251,248,241,.06);border:1px solid rgba(251,248,241,.14);border-radius:22px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#E77FB3;flex-shrink:0;"></span><h3 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;margin:0;color:#FBF8F1;">Da Sogra</h3></div>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">28</span>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.75);margin:10px 0 0;">Mussarela de búfala, tomate seco, aliche e rúcula.</p>
+        </div>
+        <div style="background:rgba(251,248,241,.06);border:1px solid rgba(251,248,241,.14);border-radius:22px;padding:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+            <div style="display:flex;align-items:center;gap:12px;"><span aria-hidden="true" style="width:14px;height:14px;border-radius:50%;background:#E3B23C;flex-shrink:0;"></span><h3 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:25px;margin:0;color:#FBF8F1;">Do Rony</h3></div>
+            <span style="font-family:'Space Mono',monospace;font-size:13px;color:#E3B23C;">NOVIDADE</span>
+          </div>
+          <p style="font-size:15px;line-height:1.5;color:rgba(251,248,241,.75);margin:10px 0 0;">Mussarela, brie, geleia de amora, nozes e raspa de limão siciliano.</p>
+        </div>
+      </div>
+
+      <p style="text-align:center;margin:44px 0 0;font-size:16px;color:rgba(251,248,241,.75);">São <strong style="color:#E3B23C;">64 pizzas tradicionais</strong>, pizzas doces e calzone — todas com molho de tomate, orégano e azeitonas. <a href="cardapio.html" style="color:#E3B23C;text-decoration:underline;">Ver tudo</a></p>
+    </div>
+  </section>
+
+  <!-- SOBRE -->
+  <section id="sobre" class="s-pad" style="max-width:1200px;margin:0 auto;padding:96px 28px;">
+    <div class="rgrid" style="display:grid;grid-template-columns:.9fr 1.1fr;gap:60px;align-items:center;">
+      <div class="sobre-photo-wrap" style="max-width:440px;width:100%;justify-self:center;">
+        <div style="position:relative;aspect-ratio:4/5;border-radius:20px 20px 999px 999px;overflow:hidden;border:4px solid #5B9BE6;box-shadow:10px 10px 0 #E3B23C;">
+          <img src="fotos/lojaporfora.jpg" alt="Fachada da Pomodori Pizzaria na Mooca" width="847" height="635" loading="lazy" decoding="async" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+      </div>
+      <div>
+        <span class="baloo" style="font-size:18px;color:#D6291F;">Nossa história</span>
+        <h2 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:50px;line-height:1.05;margin:10px 0 24px;">No mesmo forno, no mesmo bairro, desde 1987.</h2>
+        <p style="font-size:18px;line-height:1.65;color:#4a453d;margin:0 0 18px;">A Pomodori nasceu na Mooca e nunca saiu de lá. Quatro décadas fazendo pizza do mesmo jeito: massa que fermenta com calma e forno a lenha aceso todo dia.</p>
+        <p style="font-size:18px;line-height:1.65;color:#4a453d;margin:0 0 34px;">O forno é o símbolo dessa história. É ele que dá a borda tostada, o fundo crocante e o cheiro de brasa que atravessa o bairro. Tradição de família, entregue na sua casa.</p>
+        <div class="stats-row" style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div style="background:#D6291F;color:#FBF8F1;border-radius:22px;padding:18px 24px;transform:rotate(-2deg);">
+            <div style="font-family:'DM Serif Display',serif;font-size:48px;line-height:1;">1987</div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:6px;">no mesmo local</div>
+          </div>
+          <div style="background:#1B4A3F;color:#FBF8F1;border-radius:22px;padding:18px 24px;transform:rotate(2deg);">
+            <div style="font-family:'DM Serif Display',serif;font-size:48px;line-height:1;">40</div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:6px;">anos de forno a lenha</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENTREGA -->
+  <section id="entrega" style="border-top:1px solid rgba(13,11,8,.08);">
+    <div class="s-pad" style="max-width:1200px;margin:0 auto;padding:92px 28px;">
+      <div class="rgrid" style="display:grid;grid-template-columns:.95fr 1.05fr;gap:56px;align-items:center;">
+        <div>
+          <span class="baloo" style="font-size:18px;color:#D6291F;">Área de entrega</span>
+          <h2 style="font-family:'DM Serif Display',serif;font-weight:400;font-size:48px;line-height:1.05;margin:10px 0 20px;">Entregamos na Mooca e região.</h2>
+          <p style="font-size:18px;line-height:1.6;color:#4a453d;margin:0 0 20px;">Pedido feito, pizza no forno. O tempo médio de entrega é de <strong style="color:#D6291F;">cerca de 40 minutos</strong> — e chega quente. Confirme a entrega no seu endereço pelo WhatsApp.</p>
+          <p style="font-size:15px;line-height:1.6;color:#6a6154;margin:0 0 26px;">Atendemos <strong style="color:#1B4A3F;">Mooca, Alto da Mooca, Parque da Mooca, Brás, Belém, Tatuapé, Água Rasa, Cambuci, Ipiranga, Vila Prudente e Vila Zelina.</strong> Não achou seu bairro? Chama no WhatsApp que a gente confirma.</p>
+          <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" class="cta-main" style="display:inline-flex;background:#D6291F;color:#FBF8F1;font-weight:800;font-size:16px;padding:15px 28px;border-radius:999px;" style-hover="background:#1B4A3F;color:#FBF8F1;">Confirmar meu endereço →</a>
+        </div>
+        <div class="mapa-wrap" style="max-width:520px;width:100%;justify-self:center;">
+          <div class="mapa" style="position:relative;aspect-ratio:1/1;border-radius:28px;overflow:hidden;border:4px solid #0D0B08;box-shadow:8px 8px 0 #5B9BE6;background:#f2ecde;">
+            <div id="mapa-entrega" style="position:absolute;inset:0;z-index:1;"></div>
+            <img class="motoboy" src="fotos/motoboy.png" alt="Motoboy de entrega da Pomodori" width="514" height="361" loading="lazy" decoding="async" style="position:absolute;right:12px;bottom:12px;width:78px;height:auto;z-index:500;pointer-events:none;">
+          </div>
+          <div class="mapa-legend" style="display:flex;gap:8px 16px;flex-wrap:wrap;margin-top:18px;font-family:'Space Mono',monospace;font-size:12px;color:#8a7f6a;">
+            <span>raio de 3 km · ≈ 40 min</span><span>·</span><span>Rua Emboaçava, 422 — Mooca</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTATO / FOOTER -->
+  <section id="contato" style="background:#0D0B08;color:#FBF8F1;">
+    <div class="faixa" aria-hidden="true"></div>
+    <div class="s-pad foot-safe" style="max-width:1200px;margin:0 auto;padding:88px 28px 40px;">
+      <div class="rgrid" style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:48px;">
+        <div>
+          <div style="margin-bottom:24px;"><span class="logo" data-size="16"></span></div>
+          <p style="font-size:17px;line-height:1.6;color:rgba(251,248,241,.75);max-width:340px;margin:0 0 26px;">Pizza de forno a lenha, entregue quente na Mooca desde 1987.</p>
+          <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" class="cta-main" style="display:inline-flex;background:#D6291F;color:#FBF8F1;font-weight:800;font-size:17px;padding:16px 30px;border-radius:999px;" style-hover="background:#E3B23C;color:#0D0B08;">Pedir agora no WhatsApp</a>
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#E3B23C;margin-bottom:18px;">Contato</div>
+          <div class="foot-links" style="display:flex;flex-direction:column;gap:12px;font-size:16px;">
+            <a href="https://wa.me/5511955514816?text=Ol%C3%A1%2C%20vim%20pelo%20site%0A%0AGostaria%20de%20iniciar%20um%20atendimento" target="_blank" rel="noopener" style="color:#FBF8F1;" style-hover="color:#E3B23C;">WhatsApp · (11) 95551-4816</a>
+            <a href="tel:+551120281316" style="color:#FBF8F1;" style-hover="color:#E3B23C;">(11) 2028-1316</a>
+            <a href="tel:+551129669938" style="color:#FBF8F1;" style-hover="color:#E3B23C;">(11) 2966-9938</a>
+            <a href="https://instagram.com/pizzaria.pomodori" target="_blank" rel="noopener" style="color:#FBF8F1;" style-hover="color:#E3B23C;">Instagram · @pizzaria.pomodori</a>
+            <span style="color:rgba(251,248,241,.7);">Rua Emboaçava, 422 — Mooca, SP</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#E3B23C;margin-bottom:18px;">Horário</div>
+          <div style="display:flex;flex-direction:column;gap:14px;font-size:16px;">
+            <div><div style="font-weight:600;">Seg à Qui, Dom e Feriados</div><div style="color:rgba(251,248,241,.65);">18h às 23h</div></div>
+            <div><div style="font-weight:600;">Sex e Sáb</div><div style="color:rgba(251,248,241,.65);">18h às 23h30</div></div>
+            <div style="font-family:'Space Mono',monospace;font-size:12px;letter-spacing:1px;color:#E3B23C;">Também no iFood · 99 · Keeta</div>
+          </div>
+        </div>
+      </div>
+      <div class="foot-bottom" style="border-top:1px solid rgba(251,248,241,.12);margin-top:56px;padding-top:26px;display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between;font-size:13px;color:rgba(251,248,241,.5);">
+        <span>© 1987–2026 Pomodori Pizzaria · Mooca, São Paulo</span>
+        <span style="max-width:560px;text-align:right;">Os pedidos são feitos pelo WhatsApp ou pelos apps (iFood, 99, Keeta). Este site apresenta a marca e não processa pedidos nem pagamentos.</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="app.js"></script>
+<script>
+/* Mapa da entrega — o mesmo do index.html (Leaflet sob demanda, toque explicito no celular). */
+(function () {
+  var POMODORI = [-23.5716, -46.5913]; // Rua Emboaçava, 422 — Parque da Mooca
+  function init() {
+    var el = document.getElementById('mapa-entrega');
+    if (!el || !window.L) return;
+    var toque = window.matchMedia('(pointer: coarse)').matches;
+    var map = L.map(el, { center: POMODORI, zoom: 12, scrollWheelZoom: false, dragging: !toque, touchZoom: !toque });
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(map);
+    var raio = L.circle(POMODORI, { radius: 3000, color: '#D6291F', weight: 2, dashArray: '7 6', fillColor: '#D6291F', fillOpacity: 0.08 }).addTo(map);
+    L.marker(POMODORI, {
+      icon: L.divIcon({
+        className: '',
+        iconSize: [0, 0],
+        html: '<div style="position:relative;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;">' +
+              '<div style="width:16px;height:16px;border-radius:50%;background:#D6291F;border:3px solid #FBF8F1;box-shadow:0 2px 8px rgba(0,0,0,.35);"></div>' +
+              '<div style="margin-top:5px;font-family:\'Figtree\',system-ui,sans-serif;font-weight:800;font-size:12px;color:#D6291F;background:#FBF8F1;padding:2px 9px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.18);white-space:nowrap;">Pomodori · Mooca</div>' +
+              '</div>'
+      })
+    }).addTo(map);
+    map.fitBounds(raio.getBounds(), { padding: [10, 10] });
+    map.once('focus', function () { map.scrollWheelZoom.enable(); });
+    setTimeout(function () { map.invalidateSize(); }, 250);
+    if (toque) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mapa-ativar';
+      btn.innerHTML = '<span>Tocar para explorar o mapa</span>';
+      btn.addEventListener('click', function () {
+        map.dragging.enable();
+        map.touchZoom.enable();
+        btn.parentNode.removeChild(btn);
+      });
+      el.parentNode.appendChild(btn);
+    }
+  }
+  var CSS_URL = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+  var CSS_SRI = 'sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H';
+  var JS_URL  = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  var JS_SRI  = 'sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH';
+  function semMapa(el) {
+    el.innerHTML =
+      '<div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:28px;">' +
+        '<span style="font-family:\'Space Mono\',monospace;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#6a6154;">Mapa indisponível</span>' +
+        '<strong style="font-family:\'DM Serif Display\',serif;font-weight:400;font-size:23px;line-height:1.25;color:#0D0B08;">Rua Emboaçava, 422<br>Mooca — São Paulo</strong>' +
+        '<span style="font-size:15px;line-height:1.5;color:#4a453d;">Entregamos num raio de ~3 km, em cerca de 40 minutos.</span>' +
+      '</div>';
+  }
+  function carregarLeaflet(el) {
+    var css = document.createElement('link');
+    css.rel = 'stylesheet'; css.href = CSS_URL; css.integrity = CSS_SRI; css.crossOrigin = 'anonymous';
+    document.head.appendChild(css);
+    var js = document.createElement('script');
+    js.src = JS_URL; js.integrity = JS_SRI; js.crossOrigin = 'anonymous';
+    js.onload = init;
+    js.onerror = function () { semMapa(el); };
+    document.head.appendChild(js);
+  }
+  function agendar() {
+    var el = document.getElementById('mapa-entrega');
+    if (!el) return;
+    if (!('IntersectionObserver' in window)) { carregarLeaflet(el); return; }
+    var io = new IntersectionObserver(function (entries) {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      carregarLeaflet(el);
+    }, { rootMargin: '500px 0px' });
+    io.observe(el);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', agendar);
+  else agendar();
+})();
+</script>
+
+<!-- Cloudflare Web Analytics — sem cookies. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7ec39b6f096c4d1da0219e6fb667c85f"}'></script>
+</body>
+</html>
