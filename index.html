@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Pomodori Pizzaria — Forno a lenha na Mooca desde 1987</title>
+<!-- Dia das Criancas: ate o fim de 18/10/2026 (horario de SP) a pagina inicial
+     abre a versao tematica. Depois dessa data o script nao faz nada e o site
+     volta sozinho ao normal — pode apagar este bloco quando quiser. -->
+<script>
+  if (Date.now() < Date.parse('2026-10-19T00:00:00-03:00')) location.replace('dia-das-criancas.html');
+</script>
 <meta name="description" content="Pizzaria delivery na Mooca desde 1987. Massa de fermentação natural, assada no forno a lenha e entregue ainda quente. Peça pelo WhatsApp, iFood, 99 ou Keeta.">
 <!-- favicon gerado a partir de fotos/logo.png (o selo oficial).
      Caminhos relativos: funcionam no dominio proprio e tambem em
